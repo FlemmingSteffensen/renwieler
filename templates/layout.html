@@ -11,8 +11,7 @@
         <!-- documentation at http://getbootstrap.com/docs/4.1/, alternative themes at https://bootswatch.com/ -->
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
 
-        <!-- https://favicon.io/emoji-favicons/money-mouth-face/ -->
-        <link href="/static/favicon.ico" rel="icon">
+        <link href="/static/cycle.ico" rel="icon">
 
         <link href="/static/styles.css" rel="stylesheet">
 
@@ -27,16 +26,17 @@
     <body>
 
         <nav class="navbar navbar-expand-md navbar-light bg-light border">
-            <a class="navbar-brand" href="/"><span class="blue">C</span><span class="red">$</span><span class="yellow">5</span><span class="green">0</span> <span class="red">Finance</span></a>
+            <!-- <a class="navbar-brand" href="/"><span class="blue">C</span><span class="red">$</span><span class="yellow">5</span><span class="green">0</span> <span class="red">Finance</span></a> -->
+            <a class="navbar-brand" href="/"><img scr="/static/bicycle.jpeg" alt="Bicycle"></a>
             <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navbar" data-toggle="collapse" type="button">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbar">
                 {% if session.user_id %}
                     <ul class="navbar-nav mr-auto mt-2">
-                        <li class="nav-item"><a class="nav-link" href="/quote">Quote</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/buy">Buy</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/sell">Sell</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/myteams">My team</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/score">Score</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/oskar">Oskars Corner</a></li>
                         <li class="nav-item"><a class="nav-link" href="/history">History</a></li>
                     </ul>
                     <ul class="navbar-nav ml-auto mt-2">
@@ -65,7 +65,7 @@
         </main>
 
         <footer class="small text-center text-muted">
-            Data provided for free by <a href="https://iextrading.com/developer">IEX</a>. View <a href="https://iextrading.com/api-exhibit-a/">IEX’s Terms of Use</a>.
+            CS50's Final Project by Flemming Steffensen and Hanna Noordzij.
         </footer>
 
     </body>
