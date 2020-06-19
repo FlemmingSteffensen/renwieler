@@ -40,28 +40,8 @@ db = SQL("sqlite:///finance.db")
 @login_required
 def index():
     """Show available current competition"""
-    worth = 0
-    # Get the the types of stocks and the number the user currently has
-    rows = db.execute("SELECT symbol, nmb_of_shares FROM shares WHERE user_id = :user", user=session["user_id"])
-    index = 0
-    # for each row line up the values of the stocks, lookup and add the price and format in USD.
-    for row in rows:
-        price = 0
-        shares = int(row["nmb_of_shares"])
-        total = (price * shares)
-        total2 = usd(total)
-        rows[index]["price"] = price
-        rows[index]["name"] = price
-        rows[index]["shares"] = shares
-        rows[index]["total"] = total2
-        worth += total
-        index += 1
-    # Find out the remaining cash of the user and their net worth
-    cash = db.execute("SELECT cash FROM users WHERE id = :user", user=session["user_id"])
-    cash2 = usd(cash[0]["cash"])
-    worth += float(cash[0]["cash"])
     # render the page passing the information to the page
-    return render_template("index.html", rows=rows, cash2=cash2, worth=usd(worth))
+    return render_template("index.html")
 
 
 @app.route("/check", methods=["GET"])
@@ -193,6 +173,14 @@ def history():
 @app.route("/myteam")
 def myteam():
     """Show the current team of the user"""
+    #TODO
+    # Redirect user to login form
+    return render_template("myteam.html")  
+
+
+@app.route("/oskar")
+def oskar():
+    """Show blog posts by Oskar"""
     #TODO
     # Redirect user to login form
     return render_template("myteam.html")  
