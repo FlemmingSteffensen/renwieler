@@ -39,34 +39,14 @@ db = SQL("sqlite:///finance.db")
 @app.route("/")
 @login_required
 def index():
-    """Show portfolio of stocks"""
-    worth = 0
-    # Get the the types of stocks and the number the user currently has
-    rows = db.execute("SELECT symbol, nmb_of_shares FROM shares WHERE user_id = :user", user=session["user_id"])
-    index = 0
-    # for each row line up the values of the stocks, lookup and add the price and format in USD.
-    for row in rows:
-        price = 0
-        shares = int(row["nmb_of_shares"])
-        total = (price["price"] * shares)
-        total2 = usd(total)
-        rows[index]["price"] = usd(price["price"])
-        rows[index]["name"] = price["name"]
-        rows[index]["shares"] = shares
-        rows[index]["total"] = total2
-        worth += total
-        index += 1
-    # Find out the remaining cash of the user and their net worth
-    cash = db.execute("SELECT cash FROM users WHERE id = :user", user=session["user_id"])
-    cash2 = usd(cash[0]["cash"])
-    worth += float(cash[0]["cash"])
+    """Show available current competition"""
     # render the page passing the information to the page
-    return render_template("index.html", rows=rows, cash2=cash2, worth=usd(worth))
+    return render_template("index.html")
 
 
 @app.route("/check", methods=["GET"])
 def check():
-    """Return true if username available, else false, in JSON format"""
+    """Return true if username available, else false, in JSON format (CS50 based, no changes)"""
     username = request.args.get("username")
     if len(username) > 0:
         # Search the database for the username
@@ -81,36 +61,27 @@ def check():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    """Log user in"""
-
+    """Log user in (CS50 based, no changes)"""
     # Forget any user_id
     session.clear()
-
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
-
         # Ensure username was submitted
         if not request.form.get("username"):
             return apology("must provide username", 400)
-
         # Ensure password was submitted
         elif not request.form.get("password"):
             return apology("must provide password", 400)
-
         # Query database for username
         rows = db.execute("SELECT * FROM users WHERE username = :username",
                           username=request.form.get("username"))
-
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
             return apology("invalid username and/or password", 400)
-
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
-
         # Redirect user to home page
         return redirect("/")
-
     # User reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("login.html")
@@ -118,18 +89,16 @@ def login():
 
 @app.route("/logout")
 def logout():
-    """Log user out"""
-
+    """Log user out (CS50 based, no changes)"""
     # Forget any user_id
     session.clear()
-
     # Redirect user to login form
     return redirect("/")
 
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    """Register user"""
+    """Register user (CS50 based, no changes)"""
     if request.method == "GET":
         return render_template("register.html")
     if request.method == "POST":
@@ -161,7 +130,7 @@ def register():
 @app.route("/chngpw", methods=["GET", "POST"])
 @login_required
 def chngpw():
-    """Change password"""
+    """Change password (CS50 based, no changes)"""
     if request.method == "GET":
         return render_template("chngpw.html")
     if request.method == "POST":
@@ -184,6 +153,37 @@ def chngpw():
         db.execute("UPDATE users SET hash=:pw WHERE id=:userid", pw=pw, userid=session["user_id"])
         # Redirect user to home page
         return redirect("/")
+
+@app.route("/frgtpw")
+def frgtpw():
+    """Changes password for the user"""
+    #TODO
+    # Redirect user to login form
+    return redirect("/")
+
+
+@app.route("/history")
+def history():
+    """Show results from past competitons"""
+    #TODO
+    # Redirect user to login form
+    return render_template("history.html")  
+
+
+@app.route("/myteam")
+def myteam():
+    """Show the current team of the user"""
+    #TODO
+    # Redirect user to login form
+    return render_template("myteam.html")  
+
+
+@app.route("/oskar")
+def oskar():
+    """Show blog posts by Oskar"""
+    #TODO
+    # Redirect user to login form
+    return render_template("myteam.html")  
 
 
 def errorhandler(e):
