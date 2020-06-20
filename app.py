@@ -23,10 +23,6 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
-
-# Custom filter
-# app.jinja_env.filters["usd"] = usd
-
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_FILE_DIR"] = mkdtemp()
 app.config["SESSION_PERMANENT"] = False
@@ -34,7 +30,8 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure CS50 Library to use SQLite database
-db = SQL("sqlite:///finance.db")
+db = SQL("sqlite:///rw.db")
+db.execute("PRAGMA foreign_keys = ON")
 
 @app.route("/")
 @login_required
@@ -121,7 +118,7 @@ def register():
         # Generate hash
         pw = generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8)
         # insert hash in user table
-        db.execute("INSERT INTO users (username, hash, cash) VALUES (:username, :pw, 10000.00)",
+        db.execute("INSERT INTO users (username, hash) VALUES (:username, :pw)",
                    username=request.form.get("username"), pw=pw)
         # Redirect user to home page
         return redirect("/")
