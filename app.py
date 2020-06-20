@@ -183,7 +183,7 @@ def oskar():
     """Show blog posts by Oskar"""
     #TODO
     # Redirect user to login form
-    return render_template("myteam.html")  
+    return render_template("oskar.html")  
 
 
 def errorhandler(e):
