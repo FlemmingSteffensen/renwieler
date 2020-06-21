@@ -182,6 +182,13 @@ def oskar():
     # Redirect user to login form
     return render_template("oskar.html")  
 
+@app.route("/admin")
+def admin():
+    """Show blog posts by Oskar"""
+    #TODO
+    # Redirect user to login form
+    return render_template("admin.html") 
+
 
 def errorhandler(e):
     """Handle error"""
