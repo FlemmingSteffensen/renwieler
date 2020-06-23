@@ -152,6 +152,7 @@ def chngpw():
         return redirect("/")
 
 @app.route("/frgtpw")
+@login_required
 def frgtpw():
     """Changes password for the user"""
     #TODO
@@ -160,6 +161,7 @@ def frgtpw():
 
 
 @app.route("/history")
+@login_required
 def history():
     """Show results from past competitons"""
     #TODO
@@ -168,6 +170,7 @@ def history():
 
 
 @app.route("/myteam")
+@login_required
 def myteam():
     """Show the current team of the user"""
     #TODO
@@ -176,6 +179,7 @@ def myteam():
 
 
 @app.route("/oskar")
+@login_required
 def oskar():
     """Show blog posts by Oskar"""
     #TODO
@@ -183,11 +187,19 @@ def oskar():
     return render_template("oskar.html")  
 
 @app.route("/admin")
+@login_required
 def admin():
-    """Show blog posts by Oskar"""
-    #TODO
-    # Redirect user to login form
-    return render_template("admin.html") 
+    """Show page for administration to users with proper credentials"""
+    #if someone requests access to the admin page
+    if request.method == "GET":
+        #Get the role of the user from de DB
+        role = db.execute("SELECT role FROM users WHERE id = :userid", userid=session["user_id"])
+        #if the role equals 2 than grant access
+        if role[0]["role"]==2:
+            return render_template("admin.html") 
+        #else deny access
+        else: 
+            return apology("access denied", 400) 
 
 
 def errorhandler(e):
