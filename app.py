@@ -55,6 +55,23 @@ def check():
         else:
             return jsonify(False)
 
+@app.route("/checkRace", methods=["GET"])
+def checkRace():
+    """Return true if competition is available, else false, in JSON format"""
+    competition = request.args.get("competition")
+    year = request.args.get("year")
+    # TODO
+    if len(competition) > 0:
+        # Search the database for the username
+        comp = db.execute("SELECT competition FROM competitions AS C INNER JOIN racetypes AS R ON R.ID =  C.Racetype_ID\
+                            WHERE R.racetype = :competition AND C.Year = :year", competition=competition, year=year)
+        # if not found return true
+        if not comp:
+            return jsonify(True)
+        # else return false
+        else:
+            return jsonify(False)
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

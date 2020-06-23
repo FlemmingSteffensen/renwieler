@@ -6,4 +6,37 @@
 
 {% block main %}
     <h>Admin</h>
+
+    <form id="startCompetition" action="/startCompetition" method="post">
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="competition" placeholder="Competition" type="text">
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="racetype" placeholder="Racetype" type="text">
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="year" placeholder="Year" type="text">
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="startdate" placeholder="Startdate" type="text">
+        </div>
+        <button class="btn btn-primary" type="submit">Register</button>
+    </form>
+    <script>
+        //TO DO, CODE NOT FINISHED BELOW
+        register = document.getElementById("startCompetition");
+        $("#startCompetition").on('submit', function(e){
+            e.preventDefault();
+            var competition = $('input[name="competition"]').val();
+            var year = $('input[name="year"]').val();
+            $.get("/checkRace", {competition}, {year},function(responseText){
+                if (responseText == false) {
+                    alert( "competition already exists" );
+                }
+                else {
+                    register.submit();
+                }
+            });
+        });
+    </script>
 {% endblock %}
