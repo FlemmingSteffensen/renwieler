@@ -2,9 +2,14 @@ import os
 import requests
 import urllib.parse
 
+
 from flask import redirect, render_template, request, session
 from functools import wraps
+from cs50 import SQL
 
+# Configure CS50 Library to use SQLite database
+db = SQL("sqlite:///rw.db")
+db.execute("PRAGMA foreign_keys = ON")
 
 def apology(message, code=400):
     """Render message as an apology to user."""
@@ -33,3 +38,12 @@ def login_required(f):
             return redirect("/login")
         return f(*args, **kwargs)
     return decorated_function
+
+def getRole():
+    """
+    Find the role of the user
+    """
+    #Get the role of the user from de DB
+    role = db.execute("SELECT role FROM users WHERE id = :userid", userid=session["user_id"])
+    role2 = role[0]["role"]
+    return role2

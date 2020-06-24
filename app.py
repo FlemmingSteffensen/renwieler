@@ -7,7 +7,7 @@ from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import apology, login_required, usd
+from helpers import apology, login_required, getRole
 
 # Configure application
 app = Flask(__name__)
@@ -37,8 +37,10 @@ db.execute("PRAGMA foreign_keys = ON")
 @login_required
 def index():
     """Show available current competition"""
+    role = getRole()
+    print(role)
     # render the page passing the information to the page
-    return render_template("index.html")
+    return render_template("index.html", role=role)
 
 
 @app.route("/check", methods=["GET"])
