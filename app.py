@@ -212,7 +212,7 @@ def admin():
     #if someone requests access to the admin page
     if request.method == "GET":
         #Get the role of the user from de DB
-        role = db.execute("SELECT role FROM users WHERE id = :userid", userid=session["user_id"])
+        role = getRole()
         #if the role equals 2 than grant access
         if role[0]["role"]==2:
             return render_template("admin.html") 
