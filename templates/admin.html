@@ -24,7 +24,7 @@
     </form>
     <script>
         //TO DO, CODE NOT FINISHED BELOW
-        register = document.getElementById("startCompetition");
+        newComp = document.getElementById("startCompetition");
         $("#startCompetition").on('submit', function(e){
             e.preventDefault();
             var competition = $('input[name="competition"]').val();
@@ -34,7 +34,7 @@
                     alert( "competition already exists" );
                 }
                 else {
-                    register.submit();
+                    newComp.submit();
                 }
             });
         });

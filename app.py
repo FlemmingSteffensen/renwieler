@@ -220,6 +220,12 @@ def admin():
         else: 
             return apology("access denied", 400) 
 
+@app.route("/startCompetition")
+@login_required
+def startCompetition():
+    """register a new competition in the database"""
+    return render_template("admin.html")
+
 
 def errorhandler(e):
     """Handle error"""
