@@ -7,29 +7,45 @@
 {% block main %}
     <h>Admin</h>
 
-    <form id="startCompetition" action="/startCompetition" method="post">
+    <form id="newComp" action="/newComp" method="post">
         <div class="form-group">
-            <input autocomplete="off" autofocus class="form-control" name="competition" placeholder="Competition" type="text">
-        </div>
-        <div class="form-group">
-            <input class="form-control" name="racetype" placeholder="Racetype" type="text">
+            <label for="racetype">Racetype</label>
+                <select class="form-control" id="racetype" name="racetype">
+                    <option value="1">Tour de France</option>
+                    <option value="2">Giro di Italia</option>
+                    <option value="3">Vuelta Espana</option>
+            </select>
         </div>
         <div class="form-group">
             <input class="form-control" name="year" placeholder="Year" type="text">
         </div>
         <div class="form-group">
-            <input class="form-control" name="startdate" placeholder="Startdate" type="text">
+            <label for="startdate">Start date of the race</label>
+            <input class="form-control" name="startdate" placeholder="Startdate" type="date">
         </div>
-        <button class="btn btn-primary" type="submit">Register</button>
+        <div class="form-group">
+            <label for="startdate">Deadline for registration</label>
+            <input class="form-control" name="reg_stop" placeholder="Deadline for registration" type="datetime-local">
+        </div>
+        <div class="form-group">
+            <label for="startdate">Indicate rest days</label>
+            <input class="form-control" name="restdays" placeholder="Rest days" type="text">
+        </div>
+        <div class="form-group">
+            <label class="btn btn-light active">
+                <input type="checkbox" checked autocomplete="off" name="reg_active"> Activate registration now
+            </label>
+        </div>
+        <button class="btn btn-primary" type="submit">Create</button>
     </form>
     <script>
         //TO DO, CODE NOT FINISHED BELOW
-        newComp = document.getElementById("startCompetition");
-        $("#startCompetition").on('submit', function(e){
+        newComp = document.getElementById("newComp");
+        $("#newComp").on('submit', function(e){
             e.preventDefault();
-            var competition = $('input[name="competition"]').val();
+            var racetype = $("#racetype").children("option:selected").val();
             var year = $('input[name="year"]').val();
-            $.get("/checkRace", {competition}, {year},function(responseText){
+            $.get("/checkRace", {racetype, year}, function(responseText){
                 if (responseText == false) {
                     alert( "competition already exists" );
                 }

@@ -60,13 +60,13 @@ def check():
 @app.route("/checkRace", methods=["GET"])
 def checkRace():
     """Return true if competition is available, else false, in JSON format"""
-    competition = request.args.get("competition")
+    racetype = request.args.get("racetype")
     year = request.args.get("year")
     # TODO
-    if len(competition) > 0:
-        # Search the database for the username
-        comp = db.execute("SELECT competition FROM competitions AS C INNER JOIN racetypes AS R ON R.ID =  C.Racetype_ID\
-                            WHERE R.racetype = :competition AND C.Year = :year", competition=competition, year=year)
+    if len(racetype) > 0:
+        # Search the database for existing competitions
+        comp = db.execute("SELECT id FROM competitions AS C \
+                            WHERE C.racetype_id = :racetype AND C.Year = :year", racetype=racetype, year=year)
         # if not found return true
         if not comp:
             return jsonify(True)
@@ -214,17 +214,23 @@ def admin():
         #Get the role of the user from de DB
         role = getRole()
         #if the role equals 2 than grant access
-        if role[0]["role"]==2:
+        if role==2:
             return render_template("admin.html") 
         #else deny access
         else: 
             return apology("access denied", 400) 
 
-@app.route("/startCompetition")
+@app.route("/newComp", methods=["POST"])
 @login_required
-def startCompetition():
+def newComp():
     """register a new competition in the database"""
-    return render_template("admin.html")
+    if request.method == "POST":
+        # insert competion in competition table
+        db.execute("INSERT INTO competitions (racetype_id, year, startdate, reg_active, reg_stop, restdays) VALUES (:racetype, :year, :startdate, :reg_active, :reg_stop, :restdays)",
+                   racetype=request.form.get("racetype"), year=request.form.get("year"), startdate=request.form.get("startdate"), reg_active=request.form.get("reg_active"),
+                   reg_stop=request.form.get("reg_stop"), restdays=request.form.get("restdays"))
+        # Redirect user to home page
+        return render_template("admin.html")
 
 
 def errorhandler(e):
