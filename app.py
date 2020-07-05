@@ -219,9 +219,13 @@ def admin():
         else: 
             return apology("access denied", 400) 
 
-@app.route("/newComp", methods=["POST"])
+@app.route("/newComp", methods=["GET", "POST"])
 @login_required
+# TODO @admin_required
 def newComp():
+    """Show new competition page"""
+    if request.method == "GET":
+        return render_template("newcomp.html")
     """register a new competition in the database"""
     if request.method == "POST":
         #Get the role of the user from de DB
@@ -233,6 +237,29 @@ def newComp():
         # Redirect user to home page
         return render_template("admin.html", role=role)
 
+@app.route("/editComp")
+@login_required
+def editComp():
+    """Show page to edit competitions"""
+    #TODO
+    # Redirect user to login form
+    return render_template("editcomp.html")
+
+@app.route("/editBlog")
+@login_required
+def editBlog():
+    """Show page to edit and add blog posts"""
+    #TODO
+    # Redirect user to login form
+    return render_template("editblog.html")
+
+@app.route("/newUser")
+@login_required
+def newUser():
+    """Show page to edit and add users"""
+    #TODO
+    # Redirect user to login form
+    return render_template("newuser.html")       
 
 def errorhandler(e):
     """Handle error"""

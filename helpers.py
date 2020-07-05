@@ -39,6 +39,7 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
 def getRole():
     """
     Find the role of the user
@@ -47,3 +48,6 @@ def getRole():
     role = db.execute("SELECT role FROM users WHERE id = :userid", userid=session["user_id"])
     role2 = role[0]["role"]
     return role2
+
+
+# TODO @admin_required

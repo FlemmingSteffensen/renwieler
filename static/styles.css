@@ -46,6 +46,17 @@ main img
     max-width: 100%;
 }
 
+.btn a
+{
+    color: #343a40;
+    text-decoration: none;
+}
+
+.btn a:hover
+{
+    color: #fff;
+}
+
 .table td, .table th {
     padding: .75rem;
     vertical-align: top;
