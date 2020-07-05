@@ -6,41 +6,33 @@
 
 {% block adminNav %}
     {% if role == 2 %}
-    <li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
+        <li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
     {% endif %}
 {% endblock %}
 
 {% block main %}
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Symbol</th>
-                <th>Name</th>
-                <th>Shares</th>
-                <th>Price</th>
-                <th>TOTAL</th>
-            </tr>
-        </thead>
-        <tfoot>
-            <tr>
-                <td colspan="4"></td>
-                <td style="font-weight:bold">{{worth}}</td>
-            </tr>
-        </tfoot>
-        <tbody>
-            {% for row in rows %}
-            <tr>
-                <td>{{row.symbol}}</td>
-                <td>{{row.name}}</td>
-                <td>{{row.shares}}</td>
-                <td>{{row.price}}</td>
-                <td>{{row.total}}</td>
-            </tr>
-            {% endfor %}
-            <tr>
-                <td colspan="4">CASH</td>
-                <td>{{cash2}}</td>
-            </tr>
-        </tbody>
-    </table>
+    {% if comps %}
+        {% for comp in comps %}
+            <div class="card" style="width: 18rem;">
+                {% if comp.racetype_id == 1 %}
+                    <img src="static\tour.png" class="card-img-top" alt="Tour de France">
+                {% elif comp.racetype_id == 2 %}
+                    <img src="static\giro.png" class="card-img-top" alt="Giro di Italia">
+                {% elif comp.racetype_id == 3 %}
+                    <img src="static\vuelta.png" class="card-img-top" alt="Vuelta Espana">            
+                {% endif %}
+                    <div class="card-body">
+                        {% if comp.racetype_id == 1 %}
+                            <h5 class="card-title">Tour de France {{comp.year}}</h5>
+                        {% elif comp.racetype_id == 2 %}
+                            <h5 class="card-title">Giro di Italia {{comp.year}}</h5>
+                        {% elif comp.racetype_id == 3 %}
+                            <h5 class="card-title">Vuelta Espana {{comp.year}}</h5>            
+                        {% endif %}
+                        <p class="card-text">Register your team now. The deadline is {{comp.reg_stop}}</p>
+                        <a href="\regteam" class="btn btn-primary">Register team</a>
+                    </div>
+            </div>
+        {% endfor %}
+    {% endif %}
 {% endblock %}

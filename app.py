@@ -38,8 +38,10 @@ db.execute("PRAGMA foreign_keys = ON")
 def index():
     """Show available current competition"""
     role = getRole()
+    # Get all active competitions
+    comps = db.execute("SELECT racetype_id, year, startdate, reg_stop FROM competitions WHERE reg_active = 'on'")
     # render the page passing the information to the page
-    return render_template("index.html", role=role)
+    return render_template("index.html", role=role, comps=comps)
 
 
 @app.route("/check", methods=["GET"])
