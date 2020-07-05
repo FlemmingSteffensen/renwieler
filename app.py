@@ -224,12 +224,14 @@ def admin():
 def newComp():
     """register a new competition in the database"""
     if request.method == "POST":
+        #Get the role of the user from de DB
+        role = getRole()
         # insert competion in competition table
         db.execute("INSERT INTO competitions (racetype_id, year, startdate, reg_active, reg_stop, restdays) VALUES (:racetype, :year, :startdate, :reg_active, :reg_stop, :restdays)",
                    racetype=request.form.get("racetype"), year=request.form.get("year"), startdate=request.form.get("startdate"), reg_active=request.form.get("reg_active"),
                    reg_stop=request.form.get("reg_stop"), restdays=request.form.get("restdays"))
         # Redirect user to home page
-        return render_template("admin.html")
+        return render_template("admin.html", role=role)
 
 
 def errorhandler(e):
