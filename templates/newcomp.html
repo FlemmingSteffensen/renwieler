@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    newComp
+{% endblock %}
+
+{% block adminNav %}
+    {% if role == 2 %}
+    <li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
+    {% endif %}
+{% endblock %}
+
+{% block main %}
+    <div>
+        <h1>Admin</h1>
+        <br>
+        <h5>Register new competition</h5>
+        <br>
+    </div>
+
+    <form id="newComp" action="/newComp" method="post">
+        <div class="text-right col-lg-8">
+            <div class="form-group">
+                <label for="racetype">Racetype</label>
+                    <select class="form-control" id="racetype" name="racetype">
+                        <option value="1">Tour de France</option>
+                        <option value="2">Giro di Italia</option>
+                        <option value="3">Vuelta Espana</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="year">Year</label>
+                <input class="form-control" id="year" name="year" placeholder="1950" type="text" required>
+            </div>
+            <div class="form-group">
+                <label for="startdate">Start date of the race</label>
+                <input class="form-control" name="startdate" placeholder="Startdate" type="date" required>
+            </div>
+            <div class="form-group">
+                <label for="startdate">Deadline for registration</label>
+                <input class="form-control" name="reg_stop" placeholder="Deadline for registration" type="datetime-local" required>
+            </div>
+            <div class="form-group">
+                <label for="startdate">Indicate rest days</label>
+                <input class="form-control" name="restdays" placeholder="Number of Rest days" type="text">
+            </div>
+            <div class="form-group">
+                <label class="btn btn-light active">
+                    <input type="checkbox" checked autocomplete="off" name="reg_active"> Activate registration now
+                </label>
+            </div>
+            <button class="btn btn-primary" type="submit">Create</button>
+        </div>
+    </form>
+    <script>
+        //Checking if competition already exists
+        newComp = document.getElementById("newComp");
+        $("#newComp").on('submit', function(e){
+            e.preventDefault();
+            var racetype = $("#racetype").children("option:selected").val();
+            var year = $('input[name="year"]').val();
+            $.get("/checkRace", {racetype, year}, function(responseText){
+                if (responseText == false) {
+                    alert( "competition already exists" );
+                }
+                else {
+                    newComp.submit();
+                }
+            });
+        });
+    </script>
+{% endblock %}
