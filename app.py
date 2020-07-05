@@ -185,7 +185,7 @@ def frgtpw():
 def history():
     """Show results from past competitons"""
     #TODO
-    # Redirect user to login form
+    # Direct user to history page
     return render_template("history.html")  
 
 
@@ -194,8 +194,26 @@ def history():
 def myteam():
     """Show the current team of the user"""
     #TODO
-    # Redirect user to login form
+    # Direct user to my team page
     return render_template("myteam.html")  
+
+
+@app.route("/regteam")
+@login_required
+def regteam():
+    """Show the register team page of the current race"""
+    #TODO
+    # Direct user to register team page
+    return render_template("regteam.html")
+
+
+@app.route("/score")
+@login_required
+def score():
+    """Show the scores of the current race"""
+    #TODO
+    # Direct user to score page
+    return render_template("score.html") 
 
 
 @app.route("/oskar")
