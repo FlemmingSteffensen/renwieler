@@ -38,7 +38,6 @@ db.execute("PRAGMA foreign_keys = ON")
 def index():
     """Show available current competition"""
     role = getRole()
-    print(role)
     # render the page passing the information to the page
     return render_template("index.html", role=role)
 
@@ -215,7 +214,7 @@ def admin():
         role = getRole()
         #if the role equals 2 than grant access
         if role==2:
-            return render_template("admin.html") 
+            return render_template("admin.html", role=role) 
         #else deny access
         else: 
             return apology("access denied", 400) 
