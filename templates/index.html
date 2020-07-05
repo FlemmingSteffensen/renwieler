@@ -15,11 +15,11 @@
         {% for comp in comps %}
             <div class="card" style="width: 18rem;">
                 {% if comp.racetype_id == 1 %}
-                    <img src="static\tour.png" class="card-img-top" alt="Tour de France">
+                    <img src="static\tour.jpg" class="card-img-top" alt="Tour de France, Bilde av TravelingTart fra Pexels">
                 {% elif comp.racetype_id == 2 %}
-                    <img src="static\giro.png" class="card-img-top" alt="Giro di Italia">
+                    <img src="static\giro.jpg" class="card-img-top" alt="Giro di Italia, Bilde av TravelingTart fra Pexels">
                 {% elif comp.racetype_id == 3 %}
-                    <img src="static\vuelta.png" class="card-img-top" alt="Vuelta Espana">            
+                    <img src="static\vuelta.jpg" class="card-img-top" alt="Vuelta Espana, Bilde av Alex Azabache fra Pexels">            
                 {% endif %}
                     <div class="card-body">
                         {% if comp.racetype_id == 1 %}
