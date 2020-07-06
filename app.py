@@ -268,6 +268,16 @@ def editComp():
     # Redirect user to login form
     return render_template("editcomp.html")
 
+@app.route("/editPoints")
+@login_required
+def editPoints():
+    """Show available competitions for editing points"""
+    role = getRole()
+    # Get all competitions and sort by startdate
+    comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop FROM competitions ORDER BY startdate DESC")
+    # render the page passing the information to the page
+    return render_template("editPoints.html", role=role, comps=comps)
+
 @app.route("/editBlog")
 @login_required
 def editBlog():
