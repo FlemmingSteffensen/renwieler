@@ -203,8 +203,9 @@ def myteam():
 def regteam():
     """Show the register team page of the current race"""
     #TODO
+    compid = request.args.get('activecomp', None)
     # Get all the riders of the competition
-    riders = db.execute("SELECT id, comp_id, rider, nationality, rides_for, contraint_id FROM riders WHERE comp_id = 2 Order by rides_for ASC, rider ASC")
+    riders = db.execute("SELECT id, comp_id, rider, nationality, rides_for, contraint_id FROM riders WHERE comp_id = :compid Order by rides_for ASC, rider ASC", compid=compid)
     # Direct user to register team page
     return render_template("regteam.html", riders=riders)
 
@@ -266,6 +267,16 @@ def editComp():
     #TODO
     # Redirect user to login form
     return render_template("editcomp.html")
+
+@app.route("/editPoints")
+@login_required
+def editPoints():
+    """Show available competitions for editing points"""
+    role = getRole()
+    # Get all competitions and sort by startdate
+    comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop FROM competitions ORDER BY startdate DESC")
+    # render the page passing the information to the page
+    return render_template("editPoints.html", role=role, comps=comps)
 
 @app.route("/editBlog")
 @login_required
