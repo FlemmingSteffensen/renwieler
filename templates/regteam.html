@@ -11,7 +11,17 @@
         <h5>Register your team for the current race</h5>
         <br>
         {% if riders %}
-            {}
+            {% set last_team = "nothing" %}
+            {% for rider in riders %}
+                <h5>{{last_team}}</h5>
+                {% if rider.rides_for != last_team %}
+                    {% set last_team = rider.rides_for %}
+                    <h5>{{last_team}}</h5>
+                    <p class="card-text">{{rider.rider}}</p>
+                {% endif %}
+                {% else %}
+                    <p class="card-text">{{rider.rider}}</p>
+            {% endfor %}
         {% endif %}
     </div>
 {% endblock %}
