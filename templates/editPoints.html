@@ -36,7 +36,7 @@
                                         <h5 class="card-title">Vuelta Espana {{comp.year}}</h5>            
                                     {% endif %}
                                     <p class="card-text">Add or change points per rider per day for this competition</p>
-                                    <a href="{{ url_for('regteam', activecomp=comp.id) }}" class="btn btn-primary">edit points</a>
+                                    <a href="{{ url_for('points', activecomp=comp.id) }}" class="btn btn-primary">edit points</a>
                                 </div>
                             </div>
                         </div>
