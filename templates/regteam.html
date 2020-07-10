@@ -13,46 +13,66 @@
         {% if riders %}
             {% set ns = namespace(last_team = "nothing") %}
             {% set ct = namespace(count = 0) %}
-            <div class="card-columns">
-                <div class="row">
+            <form id="regteam" action="/regteam" method="post">
+                <div class="card-columns">
+                    <div class="row">
             {% for rider in riders %}
                 {% if ct.count == 0 %}
                     {% set ct.count = ct.count + 1 %}
-                    <div class="col-auto md-4">
-                        <div class="card border-info" style="width: 18rem;">
-                            <div class="card-body text-info">
-                                <div class="card-header">
-                                    <h5 class="card-title">Choose 9 riders</h5>
-                                </div>
-                                <p class="card-text">click on the riders you would like to have in your team.</p>
+                        <div class="col-auto md-4">
+                            <div class="card border-info" style="width: 18rem;">
+                                <div class="card-body text-info">
+                                    <div class="card-header">
+                                        <h5 class="card-title">Choose 9 riders</h5>
+                                    </div>
+                                    <p class="card-text">click on the riders you would like to have in your team.</p>
                 {% endif %}
                 {% if rider.rides_for != ns.last_team %}
                     {% set ns.last_team = rider.rides_for %}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-auto md-4">
-                        <div class="card border-dark" style="width: 18rem;">
-                            <div class="card-body text-dark">
-                                <div class="card-header">
-                                    <h5 class="card-title">{{ns.last_team}}</h5>
-                                </div>
-                                <div>
-                                    <input type="checkbox" id={{rider.id}} name="chosenRider">
-                                    <label for={{rider.id}}>{{rider.rider}}</label>
-                                </div>
+                        <div class="col-auto md-4">
+                            <div class="card border-dark" style="width: 18rem;">
+                                <div class="card-body text-dark">
+                                    <div class="card-header">
+                                        <h5 class="card-title">{{ns.last_team}}</h5>
+                                    </div>
+                                    <div>
+                                        <input type="checkbox" id="rider" name="chosenRider" value={{rider.id}}>
+                                        <label for={{rider.id}}>{{rider.rider}}</label>
+                                    </div>
                 {% else %}
-                                <div>
-                                    <input type="checkbox" id={{rider.id}} name="chosenRider">
-                                    <label for={{rider.id}}>{{rider.rider}}</label>
-                                </div>
+                                    <div>
+                                        <input type="checkbox" id="rider" name="chosenRider" value={{rider.id}}>
+                                        <label for={{rider.id}}>{{rider.rider}}</label>
+                                    </div>
                 {% endif %}
             {% endfor %}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+                <button class="btn btn-primary" type="submit">Submit</button>
+            </form>
+            <script>
+                //Checking if 9 riders are selected and follow the competition rules
+                regteam = document.getElementById("regteam");
+                $("#regteam").on('submit', function(e){
+                    e.preventDefault();
+                    var riders = [];
+                    $.each($("input[name='chosenRider']:checked"), function(){
+                        riders.push($(this).val());
+                    });
+                        if (riders.length < 9) {
+                            alert( "You should select more riders" );
+                        }
+                        else if (riders.length > 9) {
+                            alert("You should select less riders");
+                        }  
+                });
+            </script>
         {% endif %}
     </div>
 {% endblock %}

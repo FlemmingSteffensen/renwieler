@@ -202,13 +202,15 @@ def myteam():
 @login_required
 def regteam():
     """Show the register team page of the current race"""
-    #TODO
-    compid = request.args.get('activecomp', None)
-    # Get all the riders of the competition
-    riders = db.execute("SELECT id, comp_id, rider, nationality, rides_for, contraint_id FROM riders WHERE comp_id = :compid Order by rides_for ASC, rider ASC", compid=compid)
-    # Direct user to register team page
-    return render_template("regteam.html", riders=riders)
+    if request.method == "GET":
+        compid = request.args.get('activecomp', None)
+        # Get all the riders of the competition
+        riders = db.execute("SELECT id, comp_id, rider, nationality, rides_for, contraint_id FROM riders WHERE comp_id = :compid Order by rides_for ASC, rider ASC", compid=compid)
+        # Direct user to register team page
+        return render_template("regteam.html", riders=riders)
 
+    if request.method == "POST":
+        return render_template("regteam.html")
 
 @app.route("/score")
 @login_required
