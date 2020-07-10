@@ -278,6 +278,18 @@ def editPoints():
     # render the page passing the information to the page
     return render_template("editPoints.html", role=role, comps=comps)
 
+@app.route("/points")
+@login_required
+#TODO @admin_required
+def points():
+    """Show all riders and their points per day"""
+    role = getRole()
+    compid = request.args.get('activecomp', None)
+    # Get all the riders of the competition with their points per day
+    riderpoints = db.execute("SELECT id, comp_id, rider, nationality, rides_for, contraint_id FROM riders WHERE comp_id = :compid Order by rides_for ASC, rider ASC", compid=compid)
+    # render the page passing the information to the page
+    return render_template("points.html", role=role, riderpoints=riderpoints)    
+
 @app.route("/editBlog")
 @login_required
 def editBlog():
