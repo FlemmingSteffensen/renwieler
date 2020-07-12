@@ -256,9 +256,9 @@ def newComp():
         #Get the role of the user from de DB
         role = getRole()
         # insert competion in competition table
-        db.execute("INSERT INTO competitions (racetype_id, year, startdate, reg_active, reg_stop, restdays) VALUES (:racetype, :year, :startdate, :reg_active, :reg_stop, :restdays)",
+        db.execute("INSERT INTO competitions (racetype_id, year, startdate, reg_active, reg_stop, restdays, racedays) VALUES (:racetype, :year, :startdate, :reg_active, :reg_stop, :restdays, :racedays)",
                    racetype=request.form.get("racetype"), year=request.form.get("year"), startdate=request.form.get("startdate"), reg_active=request.form.get("reg_active"),
-                   reg_stop=request.form.get("reg_stop"), restdays=request.form.get("restdays"))
+                   reg_stop=request.form.get("reg_stop"), restdays=request.form.get("restdays"), racedays=request.form.get("racedays"))
         # Redirect user to home page
         return render_template("admin.html", role=role)
 
@@ -291,8 +291,12 @@ def points():
     compid = request.args.get('activecomp', None)
     # Get all the riders of the competition with their points per day
     riderpoints = db.execute("SELECT ri.rider, po.day, po.day_points, po.total_points FROM riders ri INNER JOIN points po ON po.rider_id = ri.id WHERE ri.comp_id = :compid ORDER BY ri.rider DESC, po.day ASC", compid=compid)
+    # Get the number of days for the competition
+    daysInComp = db.execute("SELECT racedays FROM competitions WHERE id = :compid", compid=compid)
+    # Get all riders for the current competition
+    ridersInComp = db.execute("SELECT rider FROM riders WHERE comp_id = :compid", compid=compid)
     # render the page passing the information to the page
-    return render_template("points.html", role=role, riderpoints=riderpoints)    
+    return render_template("points.html", role=role, riderpoints=riderpoints, daysInComp=daysInComp, ridersInComp=ridersInComp)    
 
 @app.route("/editBlog")
 #TODO @admin_required
