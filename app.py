@@ -264,6 +264,7 @@ def newComp():
 
 @app.route("/editComp")
 @login_required
+#TODO @admin_required
 def editComp():
     """Show page to edit competitions"""
     #TODO
@@ -272,6 +273,7 @@ def editComp():
 
 @app.route("/editPoints")
 @login_required
+#TODO @admin_required
 def editPoints():
     """Show available competitions for editing points"""
     role = getRole()
@@ -288,11 +290,12 @@ def points():
     role = getRole()
     compid = request.args.get('activecomp', None)
     # Get all the riders of the competition with their points per day
-    riderpoints = db.execute("SELECT id, comp_id, rider, nationality, rides_for, contraint_id FROM riders WHERE comp_id = :compid Order by rides_for ASC, rider ASC", compid=compid)
+    riderpoints = db.execute("SELECT ri.rider, po.day, po.day_points, po.total_points FROM riders ri INNER JOIN points po ON po.rider_id = ri.id WHERE ri.comp_id = :compid ORDER BY ri.rider DESC, po.day ASC", compid=compid)
     # render the page passing the information to the page
     return render_template("points.html", role=role, riderpoints=riderpoints)    
 
 @app.route("/editBlog")
+#TODO @admin_required
 @login_required
 def editBlog():
     """Show page to edit and add blog posts"""
@@ -302,6 +305,7 @@ def editBlog():
 
 @app.route("/newUser")
 @login_required
+#TODO @admin_required
 def newUser():
     """Show page to edit and add users"""
     #TODO
