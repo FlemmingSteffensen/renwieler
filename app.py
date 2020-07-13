@@ -308,13 +308,11 @@ def points():
     role = getRole()
     compid = request.args.get('activecomp', None)
     # Get all the riders of the competition with their points per day
-    riderpoints = db.execute("SELECT ri.rider, po.[1], po.[2], po.[3], po.[4], po.[5], po.[6], po.[7], po.[8], po.[9], po.[10], po.[11], po.[12], po.[13], po.[14], po.[15], po.[16], po.[17], po.[18], po.[19], po.[20], po.[21], po.[22], po.[23], po.[24], po.[25], po.[26], po.[27], po.[28], po.[29], po.[30] FROM riders ri LEFT JOIN points po ON po.rider_id = ri.id WHERE ri.comp_id = :compid ORDER BY ri.rider DESC", compid=compid)
+    riderpoints = db.execute("SELECT ri.rider, po.day1, po.day2, po.day3, po.day4, po.day5, po.day6, po.day7, po.day8, po.day9, po.day10, po.day11, po.day12, po.day13, po.day14, po.day15, po.day16, po.day17, po.day18, po.day19, po.day20, po.day21, po.day22, po.day23, po.day24, po.day25, po.day26, po.day27, po.day28, po.day29, po.day30 FROM riders ri LEFT JOIN points po ON po.rider_id = ri.id WHERE ri.comp_id = :compid ORDER BY ri.rider DESC", compid=compid)
     # Get the number of days for the competition
     daysInComp = db.execute("SELECT racedays FROM competitions WHERE id = :compid", compid=compid)
-    # Get all riders for the current competition
-    ridersInComp = db.execute("SELECT rider FROM riders WHERE comp_id = :compid", compid=compid)
     # render the page passing the information to the page
-    return render_template("points.html", role=role, riderpoints=riderpoints, daysInComp=daysInComp, ridersInComp=ridersInComp)    
+    return render_template("points.html", role=role, riderpoints=riderpoints, daysInComp=daysInComp)    
 
 @app.route("/editBlog")
 #TODO @admin_required

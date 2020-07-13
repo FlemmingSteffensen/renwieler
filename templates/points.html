@@ -22,11 +22,12 @@
                 </tr>
             </thead>
             <tbody>
-                {% for rider in ridersInComp %}
+                {% for rider in riderpoints %}
                     <tr>
                         <td style="white-space:nowrap">{{rider.rider}}</td>
                         {% for number in range(daysInComp[0]["racedays"]) %}
-                        <td>{{number}}</td>
+                        {% set day = "day" + (number+1)%}
+                        <td>{{rider.[day]}}</td>
                         {% endfor %}
                     </tr>
                 {% endfor %}
