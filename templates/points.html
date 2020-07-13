@@ -26,8 +26,8 @@
                     <tr>
                         <td style="white-space:nowrap">{{rider.rider}}</td>
                         {% for number in range(daysInComp[0]["racedays"]) %}
-                        {% set day = "day" + (number+1)%}
-                        <td>{{rider.[day]}}</td>
+                        {% set day = "day" ~ (number+1)%}
+                        <td>{{rider[day]}}</td>
                         {% endfor %}
                     </tr>
                 {% endfor %}
