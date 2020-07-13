@@ -212,22 +212,21 @@ def regteam():
     if request.method == "POST":
         user = session.get("user_id")
         compid = request.form.get("comp")
-        team = db.execute("SELECT id FROM team WHERE user_id = :user AND comp_id = :compid", user = user, compid = compid)
+        team = db.execute("SELECT id FROM team WHERE user_id = :user AND comp_id = :compid", user=user, compid=compid)
         # Ensure that a competition is selected
         if not compid:
             return apology("Please select a competition before registering a team", 400)
         # Ensure that users doesn't already have a team
         elif team:
             return apology("You already have a team", 400)
-         # insert competion in competition table
         else:
+            # insert competion in competition table
+            db.execute("INSERT INTO team (user_id, comp_id) VALUES (:user, :compid)", user=user, compid=compid)
+            teamid = db.execute("SELECT id FROM team WHERE user_id = :user AND comp_id = :compid", user=user, compid=compid)
+            team_id = teamid[0]["id"]
             for k in request.form.keys():
                 if k.isdigit():
-                    print("INSERT INTO team_member (team_id, rider_id) VALUES (:team_id, :rider_id)", k)
-                    print(compid)
-                    print(user)
-            print("nothing")
-            # db.execute("INSERT INTO team (user_id, comp_id) VALUES (:user, :compid)", user = user, compid = compid)
+                    db.execute("INSERT INTO team_member (team_id, rider_id) VALUES (:team_id, :rider_id)", team_id=team_id, rider_id=k)
             return redirect("/")
 
 @app.route("/score")
