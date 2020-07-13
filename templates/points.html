@@ -11,9 +11,26 @@
 {% endblock %}
 
 {% block main %}
-    {% if riderInComp %}
-        {% for rider in riderInComp %}
-            
-        {% endfor %}
+    {% if daysInComp %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    {% for number in range(daysInComp[0]["racedays"]) %}
+                    <th >{{number + 1}}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for rider in ridersInComp %}
+                    <tr>
+                        <td style="white-space:nowrap">{{rider.rider}}</td>
+                        {% for number in range(daysInComp[0]["racedays"]) %}
+                        <td>{{number}}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     {% endif %}
 {% endblock %}
