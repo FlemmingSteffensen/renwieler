@@ -308,7 +308,7 @@ def points():
     role = getRole()
     compid = request.args.get('activecomp', None)
     # Get all the riders of the competition with their points per day
-    riderpoints = db.execute("SELECT ri.rider, po.day, po.day_points, po.total_points FROM riders ri INNER JOIN points po ON po.rider_id = ri.id WHERE ri.comp_id = :compid ORDER BY ri.rider DESC, po.day ASC", compid=compid)
+    riderpoints = db.execute("SELECT ri.rider, po.[1], po.[2], po.[3], po.[4], po.[5], po.[6], po.[7], po.[8], po.[9], po.[10], po.[11], po.[12], po.[13], po.[14], po.[15], po.[16], po.[17], po.[18], po.[19], po.[20], po.[21], po.[22], po.[23], po.[24], po.[25], po.[26], po.[27], po.[28], po.[29], po.[30] FROM riders ri LEFT JOIN points po ON po.rider_id = ri.id WHERE ri.comp_id = :compid ORDER BY ri.rider DESC", compid=compid)
     # Get the number of days for the competition
     daysInComp = db.execute("SELECT racedays FROM competitions WHERE id = :compid", compid=compid)
     # Get all riders for the current competition
