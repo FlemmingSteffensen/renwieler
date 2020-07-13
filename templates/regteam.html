@@ -14,6 +14,7 @@
             {% set ns = namespace(last_team = "nothing") %}
             {% set ct = namespace(count = 0) %}
             <form id="regteam" action="/regteam" method="post">
+                <input type="hidden" id="comp" name="comp" value={{request.args.get('activecomp')}}>
                 <div class="card-columns">
                     <div class="row">
             {% for rider in riders %}
@@ -70,6 +71,9 @@
                         }
                         else if (riders.length > 9) {
                             alert("You should select less riders");
+                        }
+                        else {
+                            regteam.submit();
                         }  
                 });
             </script>

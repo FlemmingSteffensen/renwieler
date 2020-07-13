@@ -198,19 +198,37 @@ def myteam():
     return render_template("myteam.html")  
 
 
-@app.route("/regteam")
+@app.route("/regteam", methods=["GET", "POST"])
 @login_required
 def regteam():
     """Show the register team page of the current race"""
     if request.method == "GET":
         compid = request.args.get('activecomp', None)
         # Get all the riders of the competition
-        riders = db.execute("SELECT id, comp_id, rider, nationality, rides_for, contraint_id FROM riders WHERE comp_id = :compid Order by rides_for ASC, rider ASC", compid=compid)
+        riders = db.execute("SELECT id, comp_id, rider, nationality, rides_for, contraint_id, comp_id FROM riders WHERE comp_id = :compid Order by rides_for ASC, rider ASC", compid=compid)
         # Direct user to register team page
         return render_template("regteam.html", riders=riders)
 
     if request.method == "POST":
-        return render_template("regteam.html")
+        user = session.get("user_id")
+        compid = request.form.get("comp")
+        team = db.execute("SELECT id FROM team WHERE user_id = :user AND comp_id = :compid", user = user, compid = compid)
+        # Ensure that a competition is selected
+        if not compid:
+            return apology("Please select a competition before registering a team", 400)
+        # Ensure that users doesn't already have a team
+        elif team:
+            return apology("You already have a team", 400)
+         # insert competion in competition table
+        else:
+            rider = request.form.get("rider")
+            if rider:
+                print(rider)
+                return redirect("/")
+            else:
+                print("nothing")
+            # db.execute("INSERT INTO team (user_id, comp_id) VALUES (:user, :compid)", user = user, compid = compid)
+                return redirect("/")
 
 @app.route("/score")
 @login_required
