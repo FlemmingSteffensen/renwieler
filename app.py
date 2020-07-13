@@ -221,14 +221,14 @@ def regteam():
             return apology("You already have a team", 400)
          # insert competion in competition table
         else:
-            rider = request.form.get("rider")
-            if rider:
-                print(rider)
-                return redirect("/")
-            else:
-                print("nothing")
+            for k in request.form.keys():
+                if k.isdigit():
+                    print("INSERT INTO team_member (team_id, rider_id) VALUES (:team_id, :rider_id)", k)
+                    print(compid)
+                    print(user)
+            print("nothing")
             # db.execute("INSERT INTO team (user_id, comp_id) VALUES (:user, :compid)", user = user, compid = compid)
-                return redirect("/")
+            return redirect("/")
 
 @app.route("/score")
 @login_required

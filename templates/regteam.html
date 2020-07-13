@@ -40,12 +40,12 @@
                                         <h5 class="card-title">{{ns.last_team}}</h5>
                                     </div>
                                     <div>
-                                        <input type="checkbox" id="rider" name="chosenRider" value={{rider.id}}>
+                                        <input type="checkbox" id="rider" name="{{rider.id}}" value={{rider.id}}>
                                         <label for={{rider.id}}>{{rider.rider}}</label>
                                     </div>
                 {% else %}
                                     <div>
-                                        <input type="checkbox" id="rider" name="chosenRider" value={{rider.id}}>
+                                        <input type="checkbox" id="rider" name="{{rider.id}}" value={{rider.id}}>
                                         <label for={{rider.id}}>{{rider.rider}}</label>
                                     </div>
                 {% endif %}
@@ -63,7 +63,7 @@
                 $("#regteam").on('submit', function(e){
                     e.preventDefault();
                     var riders = [];
-                    $.each($("input[name='chosenRider']:checked"), function(){
+                    $.each($("input[id='rider']:checked"), function(){
                         riders.push($(this).val());
                     });
                         if (riders.length < 9) {
