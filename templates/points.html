@@ -30,9 +30,9 @@
                             {% for number in range(daysInComp[0]["racedays"]) %}
                             {% set day = "day" ~ (number+1)%}
                                 {% if rider[day] != None %}
-                                    <td><input type="number" id="{{rider.rider}} {{number+1}}" placeholder="{{rider[day]}}"></td>
+                                    <td><input width="100%" type="number" id="{{rider.rider}} {{number+1}}" placeholder="{{rider[day]}}"></td>
                                 {% else %}
-                                    <td><input type="number" id="{{rider.rider}} {{number+1}}" placeholder="0"></td>
+                                    <td><input width="100%" type="number" id="{{rider.rider}} {{number+1}}" placeholder="0"></td>
                                 {% endif %}
                             {% endfor %}
                         </tr>

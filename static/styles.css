@@ -67,23 +67,6 @@ main table {
     text-align: left;
 }
 
-table td {
-    position: relative;
-}
-  
-table td input {
-    position: absolute;
-    display: block;
-    top:0;
-    left:0;
-    margin: 0;
-    height: 100%;
-    width: 100%;
-    border: none;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 #myteam {
     text-align: left;
 }
