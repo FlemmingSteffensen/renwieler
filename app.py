@@ -189,13 +189,29 @@ def history():
     return render_template("history.html")  
 
 
-@app.route("/myteam")
+@app.route("/myteam", methods=["GET", "POST"])
 @login_required
 def myteam():
     """Show the current team of the user"""
-    #TODO
+    if request.method == "GET":
+        user_id = session.get("user_id")
+        activecomps = db.execute("SELECT c.id, c.startdate, c.racetype_id, c.year, t.id AS team_id \
+                                        FROM competitions AS c \
+                                        INNER JOIN racetypes AS r ON c.racetype_id = r.id\
+                                        INNER JOIN team AS t ON c.id = t.comp_id \
+                                            WHERE t.user_id = :user_id \
+                                            AND c.reg_active = 'on' \
+                                        ORDER BY c.startdate DESC", user_id = user_id)
+        riders = db.execute("SELECT r.rider, r.nationality, r.rides_for, tm.team_id, t.comp_id \
+                                    FROM riders AS r \
+                                    INNER JOIN team_member AS tm ON r.id = tm.rider_id \
+                                    INNER JOIN team AS t ON t.id = tm.team_id \
+                                        WHERE t.user_id = :user_id \
+                                        AND t.comp_id = :activecomps \
+                                    ORDER BY tm.rank ASC" , user_id=user_id, activecomps=activecomps[0]["id"])
+
     # Direct user to my team page
-    return render_template("myteam.html")  
+        return render_template("myteam.html", activecomps = activecomps, riders=riders)  
 
 
 @app.route("/regteam", methods=["GET", "POST"])
@@ -227,7 +243,7 @@ def regteam():
             for k in request.form.keys():
                 if k.isdigit():
                     db.execute("INSERT INTO team_member (team_id, rider_id) VALUES (:team_id, :rider_id)", team_id=team_id, rider_id=k)
-            return redirect("/")
+            return render_template("/myteam")
 
 @app.route("/score")
 @login_required
