@@ -12,26 +12,38 @@
 
 {% block main %}
     {% if daysInComp %}
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    {% for number in range(daysInComp[0]["racedays"]) %}
-                    <th >{{number + 1}}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for rider in riderpoints %}
+        <form id="updatePoints" action="/updatePoints" method="post">
+            <input type="hidden" name="compid" value="{{compid}}">
+            <table class="table table-striped">
+                <thead>
                     <tr>
-                        <td style="white-space:nowrap">{{rider.rider}}</td>
+                        <th>Name</th>
                         {% for number in range(daysInComp[0]["racedays"]) %}
-                        {% set day = "day" ~ (number+1)%}
-                        <td>{{rider[day]}}</td>
+                        <th>{{number + 1}}</th>
                         {% endfor %}
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for rider in riderpoints %}
+                        <tr>
+                            <td style="white-space:nowrap">{{rider.rider}}</td>
+                            {% for number in range(daysInComp[0]["racedays"]) %}
+                            {% set day = "day" ~ (number+1)%}
+                                {% if rider[day] != None %}
+                                    <td><input type="number" id="{{rider.rider}} {{number+1}}" placeholder="{{rider[day]}}"></td>
+                                {% else %}
+                                    <td><input type="number" id="{{rider.rider}} {{number+1}}" placeholder="0"></td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button class="btn btn-primary" type="submit">Save</button>
+        </form>
+        <script>
+            updatePoints = document.getElementById("updatePoints");
+            $("#updatePoints").on('submit', function(e){updatePoints.submit();});
+        </script>
     {% endif %}
 {% endblock %}

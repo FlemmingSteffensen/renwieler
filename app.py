@@ -311,7 +311,7 @@ def points():
     # Get the number of days for the competition
     daysInComp = db.execute("SELECT racedays FROM competitions WHERE id = :compid", compid=compid)
     # render the page passing the information to the page
-    return render_template("points.html", role=role, riderpoints=riderpoints, daysInComp=daysInComp)    
+    return render_template("points.html", role=role, riderpoints=riderpoints, daysInComp=daysInComp, compid=compid)    
 
 @app.route("/editBlog")
 #TODO @admin_required
