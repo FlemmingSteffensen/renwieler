@@ -237,13 +237,16 @@ def regteam():
             return apology("You already have a team", 400)
         else:
             # insert competion in competition table
-            db.execute("INSERT INTO team (user_id, comp_id) VALUES (:user, :compid)", user=user, compid=compid)
-            teamid = db.execute("SELECT id FROM team WHERE user_id = :user AND comp_id = :compid", user=user, compid=compid)
-            team_id = teamid[0]["id"]
-            for k in request.form.keys():
+            
+            #db.execute("INSERT INTO team (user_id, comp_id) VALUES (:user, :compid)", user=user, compid=compid)
+            #teamid = db.execute("SELECT id FROM team WHERE user_id = :user AND comp_id = :compid", user=user, compid=compid)
+            #team_id = teamid[0]["id"]
+            for k,v in request.form.keys():
                 if k.isdigit():
-                    db.execute("INSERT INTO team_member (team_id, rider_id) VALUES (:team_id, :rider_id)", team_id=team_id, rider_id=k)
-            return render_template("/myteam")
+                    print(k,v)
+
+                    #db.execute("INSERT INTO team_member (team_id, rider_id) VALUES (:team_id, :rider_id)", team_id=team_id, rider_id=k)
+            #return render_template("/myteam")
 
 @app.route("/score")
 @login_required
