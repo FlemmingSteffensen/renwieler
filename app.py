@@ -246,7 +246,7 @@ def regteam():
                         f = int(v)
                         if f > 0: 
                             db.execute("INSERT INTO team_member (team_id, rider_id, rank) VALUES (:team_id, :rider_id, :rank)", team_id=team_id, rider_id=k, rank=f)
-            return render_template("myteam.html")
+            return redirect("/myteam")
 
 @app.route("/score")
 @login_required
