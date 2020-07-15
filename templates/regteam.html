@@ -16,12 +16,10 @@
             <form id="regteam" action="/regteam" method="post">
                 <input type="hidden" id="comp" name="comp" value={{request.args.get('activecomp')}}>
                 <div class="card-columns">
-                    <div class="row">
             {% for rider in riders %}
                 {% if ct.count == 0 %}
                     {% set ct.count = ct.count + 1 %}
-                        <div class="col-auto md-4">
-                            <div class="card border-info" style="width: 18rem;">
+                            <div class="card border-info">
                                 <div class="card-body text-info">
                                     <div class="card-header">
                                         <h5 class="card-title">Choose 9 riders</h5>
@@ -32,9 +30,7 @@
                     {% set ns.last_team = rider.rides_for %}
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-auto md-4">
-                            <div class="card border-dark" style="width: 18rem;">
+                            <div class="card border-dark">
                                 <div class="card-body text-dark">
                                     <div class="card-header">
                                         <h5 class="card-title">{{ns.last_team}}</h5>
@@ -50,8 +46,7 @@
                                     </div>
                 {% endif %}
             {% endfor %}
-                                </div>
-                            </div>
+                                
                         </div>
                     </div>
                 </div>
