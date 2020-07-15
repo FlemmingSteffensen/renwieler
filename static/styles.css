@@ -57,6 +57,11 @@ main img
     color: #fff;
 }
 
+.card-columns {
+    display: inline-block;
+    text-align: left;
+}
+
 .table td, .table th {
     padding: .75rem;
     vertical-align: top;
