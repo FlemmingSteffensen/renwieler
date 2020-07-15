@@ -355,9 +355,45 @@ def newUser():
 #TODO @admin_required
 def updatePoints():
     """Save the updated points"""
-    # get the competition id
-    compid = request.form.get("compid")
-    db.execute("UPDATE") 
+    # for each rider in the table update the points per day
+    for rider in request.form.keys():
+        if rider.isdigit():
+            riderinpoints = db.execute("SELECT rider_id FROM points WHERE rider_id = :rider", rider=rider)
+            if riderinpoints:
+                db.execute("UPDATE points \
+                            SET day1 = :day1, day2 = :day2, day3 = :day3, day4 = :day4, day5 = :day5, day6 = :day6, day7 = :day7, \
+                                day8 = :day8, day9 = :day9, day10 = :day10, day11 = :day11, day12 = :day12, day13 = :day13, day14 = :day14, \
+                                day15 = :day15, day16 = :day16, day17 = :day17, day18 = :day18, day19 = :day19, day20 = :day20, day21 = :day21, \
+                                day22 = :day22, day23 = :day23, day24 = :day24, day25 = :day25, day26 = :day26, day27 = :day27, day28 = :day28, \
+                                day29 = :day29, day30 = :day30 \
+                            WHERE rider_id = :rider", rider=rider\
+                                , day1=request.form.get(rider + " 1"), day2=request.form.get(rider + " 2"), day3=request.form.get(rider + " 3")\
+                                , day4=request.form.get(rider + " 4"), day5=request.form.get(rider + " 5"), day6=request.form.get(rider + " 6")\
+                                , day7=request.form.get(rider + " 7"), day8=request.form.get(rider + " 8"), day9=request.form.get(rider + " 9")\
+                                , day10=request.form.get(rider + " 10"), day11=request.form.get(rider + " 11"), day12=request.form.get(rider + " 12")\
+                                , day13=request.form.get(rider + " 13"), day14=request.form.get(rider + " 14"), day15=request.form.get(rider + " 15")\
+                                , day16=request.form.get(rider + " 16"), day17=request.form.get(rider + " 17"), day18=request.form.get(rider + " 18")\
+                                , day19=request.form.get(rider + " 19"), day20=request.form.get(rider + " 20"), day21=request.form.get(rider + " 21")\
+                                , day22=request.form.get(rider + " 22"), day23=request.form.get(rider + " 23"), day24=request.form.get(rider + " 24")\
+                                , day25=request.form.get(rider + " 25"), day26=request.form.get(rider + " 26"), day27=request.form.get(rider + " 27")\
+                                , day28=request.form.get(rider + " 28"), day29=request.form.get(rider + " 29"), day30=request.form.get(rider + " 30")) 
+            else:
+                db.execute("INSERT INTO points (rider_id, day1, day2, day3, day4, day5, day6, day7, day8, day9, day10, day11, \
+                                day12, day13, day14, day15, day16, day17, day18, day19, day20, day21, day22, day23, day24, day25, \
+                                day26, day27, day28, day29, day30) \
+                            VALUES (:rider :day1, :day2, :day3, :day4, :day5, :day6, :day7, :day8, :day9, :day10, :day11, :day12, \
+                                :day13, :day14, :day15, :day16, :day17, :day18, :day19, :day20, :day21, :day22, :day23, :day24,\
+                                :day25, :day26, :day27, :day28, :day29, :day30)", rider=rider\
+                                , day1=request.form.get(rider + " 1"), day2=request.form.get(rider + " 2"), day3=request.form.get(rider + " 3")\
+                                , day4=request.form.get(rider + " 4"), day5=request.form.get(rider + " 5"), day6=request.form.get(rider + " 6")\
+                                , day7=request.form.get(rider + " 7"), day8=request.form.get(rider + " 8"), day9=request.form.get(rider + " 9")\
+                                , day10=request.form.get(rider + " 10"), day11=request.form.get(rider + " 11"), day12=request.form.get(rider + " 12")\
+                                , day13=request.form.get(rider + " 13"), day14=request.form.get(rider + " 14"), day15=request.form.get(rider + " 15")\
+                                , day16=request.form.get(rider + " 16"), day17=request.form.get(rider + " 17"), day18=request.form.get(rider + " 18")\
+                                , day19=request.form.get(rider + " 19"), day20=request.form.get(rider + " 20"), day21=request.form.get(rider + " 21")\
+                                , day22=request.form.get(rider + " 22"), day23=request.form.get(rider + " 23"), day24=request.form.get(rider + " 24")\
+                                , day25=request.form.get(rider + " 25"), day26=request.form.get(rider + " 26"), day27=request.form.get(rider + " 27")\
+                                , day28=request.form.get(rider + " 28"), day29=request.form.get(rider + " 29"), day30=request.form.get(rider + " 30"))
 
 
 def errorhandler(e):

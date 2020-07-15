@@ -26,6 +26,7 @@
                 <tbody>
                     {% for rider in riderpoints %}
                         <tr>
+                            <input type="hidden" id="{{rider.id}}" name="rider" value="{{rider.rider}}">
                             <td style="white-space:nowrap">{{rider.rider}}</td>
                             {% for number in range(daysInComp[0]["racedays"]) %}
                             {% set day = "day" ~ (number+1)%}
