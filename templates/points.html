@@ -26,14 +26,14 @@
                 <tbody>
                     {% for rider in riderpoints %}
                         <tr>
-                            <input type="hidden" id="{{rider.id}}" name="rider" value="{{rider.rider}}">
+                            <input type="hidden" id="{{rider.id}}" name="{{rider.id}}" value="{{rider.rider}}">
                             <td style="white-space:nowrap">{{rider.rider}}</td>
                             {% for number in range(daysInComp[0]["racedays"]) %}
                             {% set day = "day" ~ (number+1)%}
-                                {% if rider[day] != None %}
-                                    <td><input type="number" id="{{rider.id}} {{number+1}}" placeholder="{{rider[day]}}"></td>
+                                {% if rider[day] %}
+                                    <td><input type="number" name="{{rider.id}} {{number+1}}" value="{{rider[day]}}"></td>
                                 {% else %}
-                                    <td><input type="number" id="{{rider.id}} {{number+1}}" placeholder="0"></td>
+                                    <td><input type="number" name="{{rider.id}} {{number+1}}" value="0"></td>
                                 {% endif %}
                             {% endfor %}
                         </tr>
