@@ -37,12 +37,12 @@
                                     </div>
                                     <div>
                                         <input type="number" id="{{rider.id}}" name="{{rider.id}}" value="0" min="0" max="9">
-                                        <label for={{rider.id}}>{{rider.rider}}</label>
+                                        <label for={{rider.id}}>{{rider.rider}} <i>{{rider.nationality}}</i></label>
                                     </div>
                 {% else %}
                                     <div>
                                         <input type="number" id="{{rider.id}}" name="{{rider.id}}" value="0" min="0" max="9">
-                                        <label for={{rider.id}}>{{rider.rider}}</label>
+                                        <label for={{rider.id}}>{{rider.rider}} <i>{{rider.nationality}}</i></label>
                                     </div>
                 {% endif %}
             {% endfor %}
