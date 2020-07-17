@@ -44,6 +44,10 @@
                         </ol>
                         {% endif %}
                         </div>
+                        {% if canRegisterOrEdit %}
+                        <br>
+                        <a href="{{ url_for('editteam') }}" class="btn btn-primary">Edit team</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

@@ -202,6 +202,7 @@ def myteam():
                                             WHERE t.user_id = :user_id \
                                             AND c.reg_active = 'on' \
                                         ORDER BY c.startdate DESC", user_id = user_id)
+        canRegisterOrEdit = db.execute("SELECT id FROM competitions WHERE reg_active = 'on' AND strftime('%s', reg_stop) > strftime('%s', 'now') ")
         riders = db.execute("SELECT r.rider, r.nationality, r.rides_for, tm.team_id, t.comp_id \
                                     FROM riders AS r \
                                     INNER JOIN team_member AS tm ON r.id = tm.rider_id \
@@ -211,7 +212,7 @@ def myteam():
                                     ORDER BY tm.rank ASC" , user_id=user_id, activecomps=activecomps[0]["id"])
 
     # Direct user to my team page
-        return render_template("myteam.html", activecomps = activecomps, riders=riders)  
+        return render_template("myteam.html", activecomps = activecomps, riders=riders, canRegisterOrEdit=canRegisterOrEdit)  
 
 
 @app.route("/regteam", methods=["GET", "POST"])
@@ -247,6 +248,31 @@ def regteam():
                         if f > 0: 
                             db.execute("INSERT INTO team_member (team_id, rider_id, rank) VALUES (:team_id, :rider_id, :rank)", team_id=team_id, rider_id=k, rank=f)
             return redirect("/myteam")
+
+@app.route("/editteam", methods=["GET", "POST"])
+@login_required
+def editteam():
+    """Show the register team page of the current race"""
+    if request.method == "GET":
+        user_id = session.get("user_id")
+        editTeamID = db.execute("SELECT c.id, t.id AS team_id \
+                                        FROM competitions AS c \
+                                        INNER JOIN racetypes AS r ON c.racetype_id = r.id\
+                                        INNER JOIN team AS t ON c.id = t.comp_id \
+                                            WHERE t.user_id = :user_id \
+                                            AND c.reg_active = 'on'", user_id = user_id)
+        riders = db.execute("SELECT r.rider, r.nationality, r.rides_for, tm.rank, tm.team_id, t.comp_id \
+                                    FROM riders AS r \
+                                    INNER JOIN team_member AS tm ON r.id = tm.rider_id \
+                                    INNER JOIN team AS t ON t.id = tm.team_id \
+                                        WHERE t.user_id = :user_id \
+                                        AND t.comp_id = :activecomps \
+                                    ORDER BY tm.rank ASC" , user_id=user_id, activecomps=editTeamID[0]["id"])
+        allRiders = db.execute("Select r.rider, r.id, r.nationality \
+                                    FROM riders AS r \
+                                    WHERE r.comp_id = :activecomps", activecomps=editTeamID[0]["id"])
+        return render_template("editteam.html", riders=riders, allRiders = allRiders)
+
 
 @app.route("/score")
 @login_required

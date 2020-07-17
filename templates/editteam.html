@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Edit Team
+{% endblock %}
+
+{% block main %}
+    <h1>Edit Team</h1>
+
+    <form id="ranking" action="/editteam" method="post">
+        <div class="card-columns">
+            <div class="card border-dark">
+                <div class="card-body text-dark">
+                    <div class="card-header">
+                        <h5 class="card-title">Edit ranking</h5>
+                    </div>
+                    <div class="card-body text-dark"></div>
+                        {% if riders %}
+                        <ul>
+                            {% for rider in riders %}
+                            <li><input type="number" id="{{rider.id}}" name="{{rider.id}}" value="{{rider.rank}}" min="0" max="9">
+                                <label for={{rider.id}}>{{rider.rider}} <i>{{rider.nationality}}</i></label></li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </form>
+
+    <form id="riders" action="/editteam" method="post">
+        <div class="card-columns">
+            <div class="card border-dark">
+                <div class="card-body text-dark">
+                    <div class="card-header">
+                        <h5 class="card-title">Edit rider(s)</h5>
+                    </div>
+                    <div class="card-body text-dark"></div>
+                        {% if riders %}
+                        <ul>
+                            {% for rider in riders %}
+                            <li><select class="form-control" id="{{rider.id}}" name="{{rider.id}}" selected="{{rider.id}}">
+                                <option value="{{rider.id}}">{{rider.rider}}</option>
+                                {% if allriders %}
+                                    {% for allrider in allriders %}
+                                <option value="{{allriders.id}}">{{allriders.rider}}</option>
+                                    {% endfor%}
+                                {% endif %}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </form>
+
+{% endblock %}
