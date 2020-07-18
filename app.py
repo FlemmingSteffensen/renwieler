@@ -49,7 +49,7 @@ def index():
         # get all users and their teams and their points
         
         # render the page passing the competition to the page
-        return render_template("index.html", role=role, comps=comps2)
+        return render_template("index.html", role=role, comps2=comps2)
     # render the page passing only the role to the page
     return render_template("index.html", role=role)
 
