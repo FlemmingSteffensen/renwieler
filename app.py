@@ -1,7 +1,7 @@
 import os
 
 from cs50 import SQL
-from flask import Flask, flash, jsonify, redirect, render_template, request, session
+from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
@@ -40,9 +40,18 @@ def index():
     role = getRole()
     # Get all active competitions for registration
     comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop FROM competitions WHERE reg_active = 'on' AND strftime('%s', reg_stop) > strftime('%s', 'now') ")
-    # render the page passing the information to the page
-    return render_template("index.html", role=role, comps=comps)
-
+    if comps:
+        # render the page passing the competition to the page
+        return render_template("index.html", role=role, comps=comps)
+    # Get all active competitions after registration
+    comps2 = db.execute("SELECT id, racetype_id, year, startdate, reg_stop FROM competitions WHERE reg_active = 'on' AND strftime('%s', reg_stop) < strftime('%s', 'now') ")
+    if comps2:
+        # get all users and their teams and their points
+        
+        # render the page passing the competition to the page
+        return render_template("index.html", role=role, comps=comps2)
+    # render the page passing only the role to the page
+    return render_template("index.html", role=role)
 
 @app.route("/check", methods=["GET"])
 def check():
@@ -63,7 +72,6 @@ def checkRace():
     """Return true if competition is available, else false, in JSON format"""
     racetype = request.args.get("racetype")
     year = request.args.get("year")
-    # TODO
     if len(racetype) > 0:
         # Search the database for existing competitions
         comp = db.execute("SELECT id FROM competitions AS C \
@@ -386,10 +394,6 @@ def updatePoints():
         if riders.isdigit():
             riderinpoints = db.execute("SELECT rider_id FROM points WHERE rider_id = :rider", rider=riders)
             rider = str(riders)
-            daytest2 = rider + " 1"
-            daytest=str(request.form.get(rider + " 1"))
-            print(daytest + " testing day 1")
-            print(daytest2 + " testing rider + 1")
             if riderinpoints:
                 db.execute("UPDATE points \
                             SET day1 = :day1, day2 = :day2, day3 = :day3, day4 = :day4, day5 = :day5, day6 = :day6, day7 = :day7, \
@@ -425,8 +429,8 @@ def updatePoints():
                                 , day22=request.form.get(rider + " 22"), day23=request.form.get(rider + " 23"), day24=request.form.get(rider + " 24")
                                 , day25=request.form.get(rider + " 25"), day26=request.form.get(rider + " 26"), day27=request.form.get(rider + " 27")
                                 , day28=request.form.get(rider + " 28"), day29=request.form.get(rider + " 29"), day30=request.form.get(rider + " 30"))
-    role = getRole()
-    return render_template("admin.html", role=role)
+    compid=request.form.get("compid")
+    return redirect(url_for('points', activecomp=compid))
 
 def errorhandler(e):
     """Handle error"""
