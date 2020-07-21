@@ -41,10 +41,13 @@
             </div>
         {% endfor %}
     {% elif comps2 %}
-    
+        {% for team in allteams %} 
+            <div>{{ team.username }}</div>
+            {{ team.table }}  
+        {% endfor %} 
     {% else %}
             <div>
-                
+                No current competitions
             </div>
     {% endif %}
 {% endblock %}

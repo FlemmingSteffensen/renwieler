@@ -3,6 +3,7 @@ import os
 from cs50 import SQL
 from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for
 from flask_session import Session
+from flask_table import Table, Col, create_table
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -39,19 +40,56 @@ def index():
     """Show available current competition"""
     role = getRole()
     # Get all active competitions for registration
-    comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop FROM competitions WHERE reg_active = 'on' AND strftime('%s', reg_stop) > strftime('%s', 'now') ")
-    if comps:
+    #comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop FROM competitions WHERE reg_active = 'on' AND strftime('%s', reg_stop) > strftime('%s', 'now') ")
+    #if comps:
         # render the page passing the competition to the page
-        return render_template("index.html", role=role, comps=comps)
+     #   return render_template("index.html", role=role, comps=comps)
     # Get all active competitions after registration
-    comps2 = db.execute("SELECT id, racetype_id, year, startdate, reg_stop FROM competitions WHERE reg_active = 'on' AND strftime('%s', reg_stop) < strftime('%s', 'now') ")
+    comps2 = db.execute("SELECT id, racetype_id, year, startdate, reg_stop, racedays FROM competitions WHERE reg_active = 'on' AND strftime('%s', reg_stop) > strftime('%s', 'now') ")
     if comps2:
-        # get all users and their teams and their points
-        
+        # Get the teams for the active competition
+        teamusers = db.execute("SELECT t.id, u.username FROM team t INNER JOIN users u ON t.user_id = u.id WHERE t.comp_id = :compid", compid=comps2[0]["id"])
+        #create table template
+        teams = create_table('teams')
+        teams.add_column('DNF', Col('DNF'))
+        teams.add_column('rank', Col('Rank'))
+        teams.add_column('rider', Col('Rider'))
+        for i in range(comps2[0]["racedays"]):
+            teams.add_column(str(i + 1), Col(str(i + 1)))
+        teams.add_column('total', Col('Total'))
+        allteams=[]
+        # instantiate tabel per team
+        for team in teamusers:
+            userteam={}
+            # Select all riders on the team
+            riders = db.execute("SELECT r.DNF, tm.rank, r.rider, p.day1 AS '1', p.day2 AS '2', p.day3 AS '3', p.day4 AS '4', p.day5 AS '5', p.day6 AS '6', p.day7 AS '7', p.day8 AS '8', p.day9 AS '9', p.day10 AS '10', p.day11 AS '11', \
+                                p.day12 AS '12', p.day13 AS '13', p.day14 AS '14', p.day15 AS '15', p.day16 AS '16', p.day17 AS '17', p.day18 AS '18', p.day19 AS '19', p.day20 AS '20', p.day21 AS '21', p.day22 AS '22', p.day23 AS '23', p.day24 AS '24', p.day25 AS '25', \
+                                p.day26 AS '26', p.day27 AS '27', p.day28 AS '28', p.day29 AS '29', p.day30 AS '30'   \
+                                    FROM riders r \
+                                    INNER JOIN team_member tm ON r.id = tm.rider_id \
+                                    INNER JOIN team t ON t.id = tm.team_id \
+                                    INNER JOIN points p ON r.id = p.rider_id \
+                                        WHERE t.id = :team_id \
+                                    ORDER BY tm.rank ASC", team_id=team["id"])
+            # Select the points per day per rider
+            for rider in riders:
+                total = 0
+                for i in range(30): 
+                    if rider[str(i + 1)]:
+                        total = total + rider[str(i + 1)]                  
+                    print(rider["rider"] + " " + str(total))
+                rider["total"] = total
+            teamcomplete = teams(riders)
+            userteam['username'] = team['username']
+            userteam['table'] = teamcomplete
+            allteams.append(userteam)
+            # collect all teams and usernames in a dict
+
         # render the page passing the competition to the page
-        return render_template("index.html", role=role, comps2=comps2)
-    # render the page passing only the role to the page
-    return render_template("index.html", role=role)
+        return render_template("index.html", role=role, comps2=comps2, allteams=allteams)
+    else:
+        # render the page passing only the role to the page
+        return render_template("index.html", role=role)
 
 @app.route("/check", methods=["GET"])
 def check():
