@@ -41,13 +41,26 @@
             </div>
         {% endfor %}
     {% elif comps2 %}
-        {% for team in allteams %} 
-            <div>{{ team.username }}</div>
-            {{ team.table }}  
-        {% endfor %} 
+        <div class="row">
+            <div class="col-7">
+                {% for team in allteams %} 
+                    <div><h2 class="username">{{ team.username }}</h2></div>
+                    {{ team.table }}  
+                {% endfor %} 
+            </div>
+            <div class="col-5">
+                {{ standings }} 
+            </div>
+        </div>
+
     {% else %}
             <div>
                 No current competitions
             </div>
     {% endif %}
+    <script>
+        $(document).ready(function(){
+            $(".DNF:contains('1')").siblings(".rider").css( "text-decoration", "line-through" );
+        });
+    </script>
 {% endblock %}

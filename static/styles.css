@@ -62,16 +62,48 @@ main img
     text-align: left;
 }
 
-.table td, .table th {
-    padding: .75rem;
-    vertical-align: top;
-    border-top: 1px solid #dee2e6;
-}
-
-main table {
+#myteam {
     text-align: left;
 }
 
-#myteam {
+td {
+    position: relative;
+}
+  
+input[type="number"].points, textarea {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    resize: none;   
+    width: 85%;
+    padding: 0.3rem;
+    margin: 0.2rem 0.5rem;
+    border: 1px solid #ddd;
+}
+
+.DNF tr > *:nth-child(1) {
+    display: none;
+}
+
+.rider {
+    text-align: left;
+}
+
+.total {
+    border-left: 2px double rgb(0, 0, 0);
+}
+
+tbody > *:nth-child(10) {
+    border-top: 2px double rgb(0, 0, 0);
+}
+
+tbody > *:nth-child(10) > *:nth-child(3){
+    font-weight: bold;
+}
+
+.username {
+    text-transform: capitalize;
     text-align: left;
 }
