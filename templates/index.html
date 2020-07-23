@@ -41,18 +41,33 @@
             </div>
         {% endfor %}
     {% elif comps2 %}
-        <div class="row">
-            <div class="col-7">
-                {% for team in allteams %} 
-                    <div><h2 class="username">{{ team.username }}</h2></div>
-                    {{ team.table }}  
-                {% endfor %} 
+        {% for comp in comps2 %}    
+            <div>
+                {% if comp.racetype_id == 1 %}
+                    <h1 class="">Tour de France {{comp.year}}</h1>
+                {% elif comp.racetype_id == 2 %}
+                    <h1 class="">Giro di Italia {{comp.year}}</h1>
+                {% elif comp.racetype_id == 3 %}
+                    <h1 class="">Vuelta Espana {{comp.year}}</h1>
+                {% else %}
+                    <h1 class="">Unknown competition</h1>            
+                {% endif %}
             </div>
-            <div class="col-5">
-                {{ standings }} 
+            <div class="row">
+                <div class="col-7">
+                    {% for team in allteams %} 
+                        <div><h2 class="username">{{ team.username }}</h2></div>
+                        {{ team.table }}  
+                    {% endfor %} 
+                </div>
+                <div class="col-5">
+                    <div class="position-fixed">
+                        <div><h2 class="">Leaderboard</h2></div>
+                        {{ standings }} 
+                    </div>
+                </div>
             </div>
-        </div>
-
+        {% endfor %}        
     {% else %}
             <div>
                 No current competitions
@@ -61,6 +76,12 @@
     <script>
         $(document).ready(function(){
             $(".DNF:contains('1')").siblings(".rider").css( "text-decoration", "line-through" );
+            $(".DNF:contains('2')").siblings(".rider").css( {"font-style": "italic", "font-weight": "bold"} );
+            $(".day").filter(function() {
+                    return $(this).text() === "0";
+                }).text(function () {
+                    return $(this).text().replace("0", ""); 
+                });
         });
     </script>
 {% endblock %}

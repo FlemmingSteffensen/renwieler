@@ -63,8 +63,9 @@ def index():
         # Create a table template to hold the current standing
         class Standings(Table):
             rank = Col('Rank')
-            user = Col('Team')
-            points = Col('Points')        
+            user = Col('Team', column_html_attrs={'class': 'team'})
+            points = Col('Points')
+            classes = ['score', 'table', 'table-lg']        
         #initialize list to hold all the teams
         allteams=[]
         #initialize list to hold the standings
@@ -87,15 +88,43 @@ def index():
                                     ORDER BY tm.rank ASC", team_id=team["id"])
             # initialize a dict to hold the total per day
             totalday = {'DNF':0, 'rank':'', 'rider':'TOTAL', '1':0, '2':0, '3':0, '4':0, '5':0, '6':0, '7':0, '8':0, '9':0, '10':0, '11':0, '12':0, '13':0, '14':0, '15':0, '16':0, '17':0, '18':0, '19':0, '20':0, '21':0, '22':0, '23':0, '24':0, '25':0, '26':0, '27':0, '28':0, '29':0, '30':0, 'total':0}
+            captainDef = 0
             # Select the points per day per rider
             for rider in riders:
                 total = 0
+                if rider['DNF'] == 0 and rider["rank"] == 1 and captainDef == 0:
+                    rider['DNF'] = 2 
+                    captainDef = 1
+                elif rider['DNF'] == 0 and rider["rank"] == 2 and captainDef == 0:
+                    rider['DNF'] = 2 
+                    captainDef = 1   
+                elif rider['DNF'] == 0 and rider["rank"] == 3 and captainDef == 0:
+                    rider['DNF'] = 2 
+                    captainDef = 1 
+                elif rider['DNF'] == 0 and rider["rank"] == 4 and captainDef == 0:
+                    rider['DNF'] = 2 
+                    captainDef = 1  
+                elif rider['DNF'] == 0 and rider["rank"] == 5 and captainDef == 0:
+                    rider['DNF'] = 2 
+                    captainDef = 1  
+                elif rider['DNF'] == 0 and rider["rank"] == 6 and captainDef == 0:
+                    rider['DNF'] = 2 
+                    captainDef = 1 
+                elif rider['DNF'] == 0 and rider["rank"] == 7 and captainDef == 0:
+                    rider['DNF'] = 2 
+                    captainDef = 1
+                elif rider['DNF'] == 0 and rider["rank"] == 8 and captainDef == 0:
+                    rider['DNF'] = 2 
+                    captainDef = 1  
+                elif rider['DNF'] == 0 and rider["rank"] == 9 and captainDef == 0:
+                    rider['DNF'] = 2 
+                    captainDef = 1 
                 for i in range(30): 
                     if rider[str(i + 1)]:
-                        if rider["rank"] == 1:
+                        if rider['DNF'] == 2:
                             rider[str(i + 1)] = rider[str(i + 1)] * 2
                             total = total + rider[str(i + 1)]
-                            totalday[str(i + 1)] = totalday[str(i + 1)] + rider[str(i + 1)] 
+                            totalday[str(i + 1)] = totalday[str(i + 1)] + rider[str(i + 1)]
                         else:
                             total = total + rider[str(i + 1)]
                             totalday[str(i + 1)] = totalday[str(i + 1)] + rider[str(i + 1)]                  

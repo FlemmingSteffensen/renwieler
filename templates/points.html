@@ -15,10 +15,10 @@
         <form id="updatePoints" action="/updatePoints" method="post">
             <button class="btn btn-primary" type="submit">Save</button>
             <input type="hidden" name="compid" value="{{compid}}">
-            <table class="table table-striped table-sm">
+            <table class="table table-striped table-sm ptable">
                 <thead>
                     <tr>
-                        <th>Name</th>
+                        <th class="pname">Name</th>
                         {% for number in range(daysInComp[0]["racedays"]) %}
                         <th>{{number + 1}}</th>
                         {% endfor %}
@@ -28,7 +28,7 @@
                     {% for rider in riderpoints %}
                         <tr>
                             <input type="hidden" id="{{rider.id}}" name="{{rider.id}}" value="{{rider.rider}}">
-                            <td style="white-space:nowrap">{{rider.rider}}</td>
+                            <td class="pname" style="white-space: nowrap;">{{rider.rider}}</td>
                             {% for number in range(daysInComp[0]["racedays"]) %}
                             {% set day = "day" ~ (number+1)%}
                                 {% if rider[day] %}

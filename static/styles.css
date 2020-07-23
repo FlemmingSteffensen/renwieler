@@ -95,7 +95,7 @@ input[type="number"].points, textarea {
     border-left: 2px double rgb(0, 0, 0);
 }
 
-tbody > *:nth-child(10) {
+.DNF tbody > *:nth-child(10) {
     border-top: 2px double rgb(0, 0, 0);
 }
 
@@ -106,4 +106,34 @@ tbody > *:nth-child(10) > *:nth-child(3){
 .username {
     text-transform: capitalize;
     text-align: left;
+}
+
+.score {
+    text-transform: capitalize;
+}
+
+.score .team {
+    text-align: left;
+}
+
+.day {
+    border-left: 1px solid #dee2e6;
+    border-right: 1px solid #dee2e6;
+}
+
+.pname {
+    text-align: left;
+}
+
+.ptable.table-sm td, .ptable.table-sm th {
+    padding: 1.0rem;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+   -webkit-appearance: none;
+   margin: 0;
+}
+input[type="number"] {
+   -moz-appearance: textfield;
 }
