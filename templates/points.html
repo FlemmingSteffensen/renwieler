@@ -12,6 +12,19 @@
 
 {% block main %}
     {% if daysInComp %}
+        {% for comp in comps %}
+            <div>
+                {% if comp.racetype_id == 1 %}
+                    <h1 class="">Tour de France {{comp.year}}</h1>
+                {% elif comp.racetype_id == 2 %}
+                    <h1 class="">Giro di Italia {{comp.year}}</h1>
+                {% elif comp.racetype_id == 3 %}
+                    <h1 class="">Vuelta Espana {{comp.year}}</h1>
+                {% else %}
+                    <h1 class="">Unknown competition</h1>            
+                {% endif %}
+            </div>
+        {% endfor %}
         <form id="updatePoints" action="/updatePoints" method="post">
             <button class="btn btn-primary" type="submit">Save</button>
             <input type="hidden" name="compid" value="{{compid}}">

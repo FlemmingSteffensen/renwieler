@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    DNF
+{% endblock %}
+
+{% block adminNav %}
+    {% if role == 2 %}
+        <li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
+    {% endif %}
+{% endblock %}
+
+{% block main %}
+    {% if riders %}
+        {% for comp in comps %}
+            <div>
+                {% if comp.racetype_id == 1 %}
+                    <h1 class="">Tour de France {{comp.year}}</h1>
+                {% elif comp.racetype_id == 2 %}
+                    <h1 class="">Giro di Italia {{comp.year}}</h1>
+                {% elif comp.racetype_id == 3 %}
+                    <h1 class="">Vuelta Espana {{comp.year}}</h1>
+                {% else %}
+                    <h1 class="">Unknown competition</h1>            
+                {% endif %}
+            </div>
+        {% endfor %}
+        <form id="DNF" action="/DNF" method="post">
+            <div class="form-group">
+                </div class="form-row">
+                    <div class="col-12">
+                        <input type="hidden" name="compid" value="{{compid}}">
+                        <label for="rider">Select a rider</label>
+                        <select class="form-control" name="rider" id="rider">
+                            <option selected style="font-style: italic;">Select a rider</option>
+                            {% for rider in riders %}
+                            <option name="{{ rider.DNF }}" value="{{ rider.id }}">{{ rider.rider }}</option> 
+                            {% endfor %}
+                        </select>
+                        <label for="riderDNF">DNF</label>
+                        <input type="checkbox" value="0" id="riderDNF" name="riderDNF">
+                    </div>    
+                </div>
+            </div>
+            <button class="btn btn-primary" type="submit">Save</button>
+        </form>
+        <script>
+            DNF = document.getElementById("DNF");
+            $("#DNF").on('submit', function(){DNF.submit();});
+            $("#rider").change(function() {
+                var val = $(this).find('option:selected').attr("name");
+                if (val == "1") {
+                    $('input:checkbox').attr('checked', true);
+                    $('input:checkbox').val("1")
+                } else {
+                    $('input:checkbox').attr('checked', false);
+                    $('input:checkbox').val("0")
+                }
+            })
+            $("#riderDNF").change(function() {
+                var val = this.value
+                if (val == "1") {
+                    $('input:checkbox').val("0")
+                } else {
+                    $('input:checkbox').val("1")
+                }
+            })
+        </script>
+    {% endif %}
+{% endblock %}

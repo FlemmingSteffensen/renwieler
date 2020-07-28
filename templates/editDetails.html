@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Edit points
+    Edit details of the competition
 {% endblock %}
 
 {% block adminNav %}
@@ -35,8 +35,12 @@
                                     {% elif comp.racetype_id == 3 %}
                                         <h5 class="card-title">Vuelta Espana {{comp.year}}</h5>            
                                     {% endif %}
-                                    <p class="card-text">Add or change points per rider per day for this competition</p>
-                                    <a href="{{ url_for('points', activecomp=comp.id) }}" class="btn btn-primary">edit points</a>
+                                    <p class="card-text">Add or change points, register a DNF rider, or change the config of the competition itself</p>
+                                    <div class="btn-group-vertical">
+                                        <a href="{{ url_for('points', activecomp=comp.id) }}" class="btn btn-primary" style="margin: 0.1em;">Edit points</a>
+                                        <a href="{{ url_for('DNF', activecomp=comp.id) }}" class="btn btn-primary" style="margin: 0.1em;">Register DNF</a>
+                                        <a href="{{ url_for('editComp', activecomp=comp.id) }}" class="btn btn-primary" style="margin: 0.1em;">Change config</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
