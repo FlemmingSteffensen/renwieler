@@ -40,12 +40,12 @@ def index():
     """Show available current competition"""
     role = getRole()
     # Get all active competitions for registration
-    #comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop FROM competitions WHERE reg_active = 'on' AND strftime('%s', reg_stop) > strftime('%s', 'now') ")
-    #if comps:
+    comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop FROM competitions WHERE reg_active = 'on' AND strftime('%s', reg_stop) > strftime('%s', 'now') ")
+    if comps:
         # render the page passing the competition to the page
-    #    return render_template("index.html", role=role, comps=comps)
+        return render_template("index.html", role=role, comps=comps)
     # Get all active competitions after registration
-    comps2 = db.execute("SELECT id, racetype_id, year, startdate, reg_stop, racedays FROM competitions WHERE reg_active = 'on' AND strftime('%s', reg_stop) > strftime('%s', 'now') ")
+    comps2 = db.execute("SELECT id, racetype_id, year, startdate, reg_stop, racedays FROM competitions WHERE reg_active = 'on' AND strftime('%s', reg_stop) < strftime('%s', 'now') ")
     if comps2:
         # Get the teams for the active competition
         teamusers = db.execute("SELECT t.id, u.username FROM team t INNER JOIN users u ON t.user_id = u.id WHERE t.comp_id = :compid", compid=comps2[0]["id"])
@@ -439,25 +439,30 @@ def newComp():
         # Redirect user to home page
         return render_template("admin.html", role=role)
 
-@app.route("/editComp")
+@app.route("/editComp", methods=["GET", "POST"])
 @login_required
 #TODO @admin_required
 def editComp():
     """Show page to edit competitions"""
-    #TODO
-    # Redirect user to login form
-    return render_template("editcomp.html")
+    if request.method == "GET":
+        compid = request.args.get('activecomp', None)
+        comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop, racedays, restdays, reg_active FROM competitions WHERE id = :compid", compid=compid)
+        return render_template("editcomp.html", comps=comps)
+    """register a new competition in the database"""
+    if request.method == "POST":
+        compid = request.args.get('activecomp', None)
+        return render_template("editcomp.html")
 
-@app.route("/editPoints")
+@app.route("/editDetails")
 @login_required
 #TODO @admin_required
-def editPoints():
+def editDetails():
     """Show available competitions for editing points"""
     role = getRole()
     # Get all competitions and sort by startdate
     comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop FROM competitions ORDER BY startdate DESC")
     # render the page passing the information to the page
-    return render_template("editPoints.html", role=role, comps=comps)
+    return render_template("editDetails.html", role=role, comps=comps)
 
 @app.route("/points")
 @login_required
@@ -466,12 +471,43 @@ def points():
     """Show all riders and their points per day"""
     role = getRole()
     compid = request.args.get('activecomp', None)
+    comps = db.execute("SELECT id, racetype_id, year FROM competitions WHERE id = :compid", compid=compid)
     # Get all the riders of the competition with their points per day
     riderpoints = db.execute("SELECT ri.id, ri.rider, po.day1, po.day2, po.day3, po.day4, po.day5, po.day6, po.day7, po.day8, po.day9, po.day10, po.day11, po.day12, po.day13, po.day14, po.day15, po.day16, po.day17, po.day18, po.day19, po.day20, po.day21, po.day22, po.day23, po.day24, po.day25, po.day26, po.day27, po.day28, po.day29, po.day30 FROM riders ri LEFT JOIN points po ON po.rider_id = ri.id WHERE ri.comp_id = :compid ORDER BY ri.rider ASC", compid=compid)
     # Get the number of days for the competition
     daysInComp = db.execute("SELECT racedays FROM competitions WHERE id = :compid", compid=compid)
     # render the page passing the information to the page
-    return render_template("points.html", role=role, riderpoints=riderpoints, daysInComp=daysInComp, compid=compid)    
+    return render_template("points.html", role=role, riderpoints=riderpoints, daysInComp=daysInComp, compid=compid, comps=comps)    
+
+@app.route("/DNF", methods=["GET", "POST"])
+@login_required
+#TODO @admin_required
+def DNF():
+    """provide all riders of the comp and their DNF status to the page"""
+    if request.method == "GET":
+        role = getRole()
+        compid = request.args.get('activecomp', None)
+        comps = db.execute("SELECT id, racetype_id, year FROM competitions WHERE id = :compid", compid=compid)
+        # Get all the riders of the competition with their DNF status
+        riders = db.execute("SELECT ri.id, ri.rider, ri.DNF FROM riders ri WHERE ri.comp_id = :compid ORDER BY ri.rider ASC", compid=compid)
+        # render the page passing the information to the page
+        return render_template("DNF.html", role=role, riders=riders, compid=compid, comps=comps)  
+    """Update the DNF status for the selected rider"""
+    if request.method == "POST":  
+        role = getRole()
+        compid = request.form.get('compid')
+        comps = db.execute("SELECT id, racetype_id, year FROM competitions WHERE id = :compid", compid=compid)
+        # save the updated status for the rider
+        check = request.form.get("riderDNF")
+        if check != '1':
+            check = "0"
+        print(check)
+        db.execute("UPDATE riders SET DNF = :DNF WHERE id = :rider", DNF=check, rider=request.form.get("rider"))
+        # Get all the riders of the competition with their DNF status
+        riders = db.execute("SELECT ri.id, ri.rider, ri.DNF FROM riders ri WHERE ri.comp_id = :compid ORDER BY ri.rider ASC", compid=compid)
+        # render the page passing the information to the page
+        return render_template("DNF.html", role=role, riders=riders, compid=compid, comps=comps)  
+
 
 @app.route("/editBlog")
 #TODO @admin_required
