@@ -427,15 +427,20 @@ def admin():
 def newComp():
     """Show new competition page"""
     if request.method == "GET":
-        return render_template("newcomp.html")
+        #Get the role of the user from de DB
+        role = getRole()
+        return render_template("newcomp.html", role=role)
     """register a new competition in the database"""
     if request.method == "POST":
         #Get the role of the user from de DB
         role = getRole()
         # insert competion in competition table
-        db.execute("INSERT INTO competitions (racetype_id, year, startdate, reg_active, reg_stop, restdays, racedays) VALUES (:racetype, :year, :startdate, :reg_active, :reg_stop, :restdays, :racedays)",
-                   racetype=request.form.get("racetype"), year=request.form.get("year"), startdate=request.form.get("startdate"), reg_active=request.form.get("reg_active"),
-                   reg_stop=request.form.get("reg_stop"), restdays=request.form.get("restdays"), racedays=request.form.get("racedays"))
+        active = request.form.get("reg_active")
+        if active != "on":
+            active = "off"
+        db.execute("INSERT INTO competitions (racetype_id, year, startdate, reg_active, reg_stop, racedays) VALUES (:racetype, :year, :startdate, :reg_active, :reg_stop, :racedays)",
+                   racetype=request.form.get("racetype"), year=request.form.get("year"), startdate=request.form.get("startdate"), reg_active=active,
+                   reg_stop=request.form.get("reg_stop"), racedays=request.form.get("racedays"))
         # Redirect user to home page
         return render_template("admin.html", role=role)
 
@@ -445,13 +450,24 @@ def newComp():
 def editComp():
     """Show page to edit competitions"""
     if request.method == "GET":
+        #Get the role of the user from de DB
+        role = getRole()
         compid = request.args.get('activecomp', None)
-        comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop, racedays, restdays, reg_active FROM competitions WHERE id = :compid", compid=compid)
-        return render_template("editcomp.html", comps=comps)
+        comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop, racedays, reg_active FROM competitions WHERE id = :compid", compid=compid)
+        return render_template("editcomp.html", comps=comps, role=role)
     """register a new competition in the database"""
     if request.method == "POST":
-        compid = request.args.get('activecomp', None)
-        return render_template("editcomp.html")
+        #Get the role of the user from de DB
+        role = getRole()
+        compid = request.form.get('compid')
+        active = request.form.get("reg_active")
+        if active != "on":
+            active = "off"
+        db.execute("UPDATE competitions SET startdate = :startdate, reg_active = :reg_active, reg_stop = :reg_stop, racedays = :racedays WHERE id = :compid",
+                   startdate=request.form.get("startdate"), reg_active=active,
+                   reg_stop=request.form.get("reg_stop"), racedays=request.form.get("racedays"), compid=compid)
+        # Redirect user to home page
+        return render_template("admin.html", role=role)
 
 @app.route("/editDetails")
 @login_required

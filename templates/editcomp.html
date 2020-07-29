@@ -31,6 +31,7 @@
                     <h1 class="">Unknown competition</h1>            
                 {% endif %}
             </div>
+            <input type="hidden" name="compid" value="{{ comp.id }}">
             <div class="form-group">
                 <label for="startdate">Start date of the race</label>
                 <input class="form-control" name="startdate" placeholder="Startdate" type="date" value="{{ comp.startdate }}" required>
@@ -40,20 +41,40 @@
                 <input class="form-control" name="reg_stop" placeholder="Deadline for registration" type="datetime-local" value="{{ comp.reg_stop }}"required>
             </div>
             <div class="form-group">
-                <label for="racedays">Number of days of the competition</label>
-                <input class="form-control" name="racedays" placeholder="Number of days of the competition" type="number" value="{{ comp.racedays }}" required>
-            </div>
-            <div class="form-group">
-                <label for="restdays">Indicate rest days</label>
-                <input class="form-control" name="restdays" placeholder="Number of Rest days" type="text" value="{{ comp.restdays }}">
+                <label for="racedays">Number stages</label>
+                <input class="form-control" name="racedays" placeholder="Number of stages" type="number" value="{{ comp.racedays }}" required>
             </div>
             <div class="form-group">
                 <label class="btn btn-light active">
-                    <input type="checkbox" checked autocomplete="off" name="reg_active"> Activate registration now
+                    <input type="checkbox" checked autocomplete="off" name="reg_active" id="reg_active"> Activate registration now
                 </label>
             </div>
-            <button class="btn btn-primary" type="submit">Create</button>
+            <button class="btn btn-primary" type="submit">Update</button>
         </div>
     </form>
+    <script>
+        editComp = document.getElementById("editComp");
+        $("#editComp").on('submit', function(){editComp.submit();});
+        $(document).ready(function() {
+                var val = "{{ comp.reg_active }}";
+                if (val == "on") {
+                    $('input:checkbox').attr('checked', true);
+                    $('input:checkbox').val("on")
+                } else {
+                    $('input:checkbox').attr('checked', false);
+                    $('input:checkbox').val("off")
+                }
+            })
+        $("#reg_active").change(function() {
+                var val = this.value
+                if (val == "on") {
+                    $('input:checkbox').val("off")
+                    $('input:checkbox').attr('checked', false);
+                } else {
+                    $('input:checkbox').val("on")
+                    $('input:checkbox').attr('checked', true);
+                }
+        })
+    </script>
 {% endfor %}
 {% endblock %}

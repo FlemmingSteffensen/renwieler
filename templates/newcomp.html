@@ -4,6 +4,12 @@
     newComp
 {% endblock %}
 
+{% block adminNav %}
+    {% if role == 2 %}
+        <li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
+    {% endif %}
+{% endblock %}
+
 {% block main %}
     <div>
         <h1>Admin</h1>
@@ -35,16 +41,12 @@
                 <input class="form-control" name="reg_stop" placeholder="Deadline for registration" type="datetime-local" required>
             </div>
             <div class="form-group">
-                <label for="racedays">Number of days of the competition</label>
-                <input class="form-control" name="racedays" placeholder="Number of days of the competition" type="number" required>
-            </div>
-            <div class="form-group">
-                <label for="restdays">Indicate rest days</label>
-                <input class="form-control" name="restdays" placeholder="Number of Rest days" type="text">
+                <label for="racedays">Number of stages</label>
+                <input class="form-control" name="racedays" placeholder="Number of stages" type="number" required>
             </div>
             <div class="form-group">
                 <label class="btn btn-light active">
-                    <input type="checkbox" checked autocomplete="off" name="reg_active"> Activate registration now
+                    <input type="checkbox" checked autocomplete="off" name="reg_active" id="reg_active" value="on"> Activate registration now
                 </label>
             </div>
             <button class="btn btn-primary" type="submit">Create</button>
@@ -66,5 +68,15 @@
                 }
             });
         });
+        $("#reg_active").change(function() {
+                var val = this.value
+                if (val == "on") {
+                    $('input:checkbox').val("off")
+                    $('input:checkbox').attr('checked', false);
+                } else {
+                    $('input:checkbox').val("on")
+                    $('input:checkbox').attr('checked', true);
+                }
+        })
     </script>
 {% endblock %}
