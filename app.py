@@ -119,7 +119,7 @@ def index():
                 elif rider['DNF'] == 0 and rider["rank"] == 9 and captainDef == 0:
                     rider['DNF'] = 2 
                     captainDef = 1 
-                for i in range(30): 
+                for i in range(comps2[0]["racedays"]): 
                     if rider[str(i + 1)]:
                         if rider['DNF'] == 2:
                             rider[str(i + 1)] = rider[str(i + 1)] * 2
