@@ -3,7 +3,7 @@ import os
 from cs50 import SQL
 from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for
 from flask_session import Session
-from flask_table import Table, Col, create_table, OptCol
+from flask_table import Table, Col, create_table, OptCol, ButtonCol
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -534,14 +534,41 @@ def editBlog():
     # Redirect user to login form
     return render_template("editblog.html")
 
-@app.route("/newUser")
+@app.route("/editUser", methods=["GET", "POST"])
 @login_required
 #TODO @admin_required
-def newUser():
-    """Show page to edit and add users"""
-    #TODO
-    # Redirect user to login form
-    return render_template("newuser.html")       
+def editUser():
+    """Show page to approve users"""
+    # Create a table template to hold the applicants
+    class AppTable(Table):
+        id = Col('Id')
+        username = Col('Username')
+        Approve = ButtonCol('Approve', 'editUser')
+        Delete = ButtonCol('Delete', 'editUser')
+        classes = ['Applicants', 'table'] 
+
+    class userTable(Table):
+        id = Col('Id')
+        username = Col('Username')
+        role = Col('Role')
+        classes = ['Applicants', 'table']     
+    
+    if request.method == "GET":
+        role = getRole()
+        # get all not approved users
+        applicants = db.execute("SELECT id, username FROM users WHERE approved = 0")
+        applicantstable = AppTable(applicants)
+        # get all approved users
+        users = db.execute("SELECT id, username, role, approved FROM users WHERE approved = 1")
+        userstable = userTable(users)
+        # load new user screen
+        return render_template("editUser.html", role=role, users=userstable, applicants=applicantstable)      
+    """Set user to approved or delete user"""
+    if request.method == "POST": 
+        role = getRole()
+        # reload new user screen
+        return render_template("editUser.html", role=role)  
+     
 
 @app.route("/updatePoints", methods=["POST"])
 @login_required
