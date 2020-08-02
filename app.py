@@ -376,17 +376,18 @@ def editteam():
                                         INNER JOIN team AS t ON c.id = t.comp_id \
                                             WHERE t.user_id = :user_id \
                                             AND c.reg_active = 'on'", user_id = user_id)
-        riders = db.execute("SELECT r.rider, r.nationality, r.rides_for, tm.rank, tm.team_id, t.comp_id \
+        teamRiders = db.execute("SELECT r.rider, r.nationality, r.rides_for, tm.rank, tm.team_id, t.comp_id \
                                     FROM riders AS r \
                                     INNER JOIN team_member AS tm ON r.id = tm.rider_id \
                                     INNER JOIN team AS t ON t.id = tm.team_id \
                                         WHERE t.user_id = :user_id \
                                         AND t.comp_id = :activecomps \
                                     ORDER BY tm.rank ASC" , user_id=user_id, activecomps=editTeamID[0]["id"])
-        allRiders = db.execute("Select r.rider, r.id, r.nationality \
-                                    FROM riders AS r \
-                                    WHERE r.comp_id = :activecomps", activecomps=editTeamID[0]["id"])
-        return render_template("editteam.html", riders=riders, allRiders = allRiders)
+        allRiders = db.execute("Select id, comp_id, rider, nationality, rides_for, contraint_id, comp_id \
+                                    FROM riders \
+                                    WHERE comp_id = :activecomps \
+                                    Order by rides_for ASC, rider ASC", activecomps=editTeamID[0]["id"])
+        return render_template("editteam.html", teamRiders=teamRiders, allRiders = allRiders)
 
 
 @app.route("/score")
