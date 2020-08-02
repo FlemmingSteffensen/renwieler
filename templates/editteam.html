@@ -14,6 +14,7 @@
             {% set ns = namespace(last_team = "nothing") %}
             {% set ct = namespace(count = 0) %}
             {% set rank = namespace(value = 0) %}
+            {% set background = namespace(color = "background-color:#FFFFFF;") %}
             <form id="editteam" action="/editteam" method="post">
                 <div class="card-columns">
             {% for rider in allRiders %}
@@ -37,23 +38,27 @@
                                     </div>
                                     <div>
                     {% set rank.value = 0 %}
+                    {% set background.color = "background-color:#FFFFFF;" %}
                         {% for teamRider in teamRiders %} 
                             {% if rider.rider == teamRider.rider %} 
-                                {% set rank.value = teamRider.rank %} 
+                                {% set rank.value = teamRider.rank %}
+                                {% set background.color = "background-color:#3CBC8D;" %} 
                             {% endif %}
                         {% endfor %}
-                                        <input type="number" id="{{rider.id}}" name="{{rider.id}}" value="{{rank.value}}" min="0" max="9">
+                                        <input type="number" id="{{rider.id}}" name="{{rider.id}}" value="{{rank.value}}" min="0" max="9" style="font-style: italic; {{background.color}}">
                                         <label for={{rider.id}}>{{rider.rider}} <i>{{rider.nationality}}</i></label>
                                     </div>
                 {% else %}
                                     <div>
                         {% set rank.value = 0 %}
+                        {% set background.color = "background-color:#FFFFFF;" %}
                         {% for teamRider in teamRiders %} 
                             {% if rider.rider == teamRider.rider %} 
-                                {% set rank.value = teamRider.rank %} 
+                                {% set rank.value = teamRider.rank %}
+                                {% set background.color = "background-color:#3CBC8D;" %} 
                             {% endif %}
                         {% endfor %}
-                                        <input type="number" id="{{rider.id}}" name="{{rider.id}}" value="{{rank.value}}" min="0" max="9">
+                                        <input type="number" id="{{rider.id}}" name="{{rider.id}}" value="{{rank.value}}" min="0" max="9" style="font-style: italic; {{background.color}}">
                                         <label for={{rider.id}}>{{rider.rider}} <i>{{rider.nationality}}</i></label>
                                     </div>
                 {% endif %}
