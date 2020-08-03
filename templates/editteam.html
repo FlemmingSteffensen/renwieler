@@ -45,7 +45,7 @@
                                 {% set background.color = "background-color:#3CBC8D;" %} 
                             {% endif %}
                         {% endfor %}
-                                        <input type="number" id="{{rider.id}}" name="{{rider.id}}" value="{{rank.value}}" min="0" max="9" style="font-style: italic; {{background.color}}">
+                                        <input type="number" id="{{rider.id}}" name="{{rider.id}}" value="{{rank.value}}" min="0" max="9" {% if rank.value > 0 %} style="background-color:#3CBC8D;" {% endif %}>
                                         <label for={{rider.id}}>{{rider.rider}} <i>{{rider.nationality}}</i></label>
                                     </div>
                 {% else %}
@@ -58,7 +58,7 @@
                                 {% set background.color = "background-color:#3CBC8D;" %} 
                             {% endif %}
                         {% endfor %}
-                                        <input type="number" id="{{rider.id}}" name="{{rider.id}}" value="{{rank.value}}" min="0" max="9" style="font-style: italic; {{background.color}}">
+                                        <input type="number" id="{{rider.id}}" name="{{rider.id}}" value="{{rank.value}}" min="0" max="9" {% if rank.value > 0 %} style="background-color:#3CBC8D;" {% endif %}>
                                         <label for={{rider.id}}>{{rider.rider}} <i>{{rider.nationality}}</i></label>
                                     </div>
                 {% endif %}
