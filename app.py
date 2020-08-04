@@ -302,9 +302,128 @@ def frgtpw():
 @login_required
 def history():
     """Show results from past competitons"""
-    #TODO
+    role = getRole()
+    # Get all competitions and sort by startdate
+    comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop FROM competitions ORDER BY startdate DESC")
     # Direct user to history page
-    return render_template("history.html")  
+    return render_template("history.html", role=role, comps=comps)  
+
+@app.route("/archive")
+@login_required
+def archive():
+    """Show results from selected competiton"""
+    role = getRole()
+    compid = request.args.get('activecomp', None)
+    comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop, racedays FROM competitions WHERE id = :compid", compid=compid)
+    # Get the teams for the active competition
+    teamusers = db.execute("SELECT t.id, u.username FROM team t INNER JOIN users u ON t.user_id = u.id WHERE t.comp_id = :compid", compid=compid)
+    tbl_options = dict(
+        classes=['table', 'table-sm', 'DNF'],
+        no_items='Empty')
+    #create table template to hold the data per team
+    teams = create_table('teams', options=tbl_options)\
+        .add_column('DNF', Col('DNF', column_html_attrs={'class': 'DNF'}))\
+        .add_column('rank', Col('Rank', column_html_attrs={'class': 'rank'}))\
+        .add_column('rider', Col('Rider', column_html_attrs={'class': 'rider'}))
+    for i in range(comps[0]["racedays"]):
+        teams.add_column(str(i + 1), Col(str(i + 1), column_html_attrs={'class': 'day'}))
+    teams.add_column('total', Col('TOTAL', column_html_attrs={'class': 'total'}))
+    # Create a table template to hold the current standing
+    class Standings(Table):
+        rank = Col('Rank')
+        user = Col('Team', column_html_attrs={'class': 'team'})
+        points = Col('Points')
+        classes = ['score', 'table', 'table-lg']        
+    #initialize list to hold all the teams
+    allteams=[]
+    #initialize list to hold the standings
+    standingslist=[]
+    # instantiate tabel per team
+    for team in teamusers:
+        # initialize a dict to hold all the information for the team
+        userteam={}
+        # initialize a dict to hold all the current total points for the team
+        standingsteam={'rank': 0, 'user': '', 'points': 0}
+        # Select all riders on the team
+        riders = db.execute("SELECT r.DNF, tm.rank, r.rider, p.day1 AS '1', p.day2 AS '2', p.day3 AS '3', p.day4 AS '4', p.day5 AS '5', p.day6 AS '6', p.day7 AS '7', p.day8 AS '8', p.day9 AS '9', p.day10 AS '10', p.day11 AS '11', \
+                            p.day12 AS '12', p.day13 AS '13', p.day14 AS '14', p.day15 AS '15', p.day16 AS '16', p.day17 AS '17', p.day18 AS '18', p.day19 AS '19', p.day20 AS '20', p.day21 AS '21', p.day22 AS '22', p.day23 AS '23', p.day24 AS '24', p.day25 AS '25', \
+                            p.day26 AS '26', p.day27 AS '27', p.day28 AS '28', p.day29 AS '29', p.day30 AS '30'   \
+                                FROM riders r \
+                                INNER JOIN team_member tm ON r.id = tm.rider_id \
+                                INNER JOIN team t ON t.id = tm.team_id \
+                                INNER JOIN points p ON r.id = p.rider_id \
+                                    WHERE t.id = :team_id \
+                                ORDER BY tm.rank ASC", team_id=team["id"])
+        # initialize a dict to hold the total per day
+        totalday = {'DNF':0, 'rank':'', 'rider':'TOTAL', '1':0, '2':0, '3':0, '4':0, '5':0, '6':0, '7':0, '8':0, '9':0, '10':0, '11':0, '12':0, '13':0, '14':0, '15':0, '16':0, '17':0, '18':0, '19':0, '20':0, '21':0, '22':0, '23':0, '24':0, '25':0, '26':0, '27':0, '28':0, '29':0, '30':0, 'total':0}
+        captainDef = 0
+        # Select the points per day per rider
+        for rider in riders:
+            total = 0
+            if rider['DNF'] == 0 and rider["rank"] == 1 and captainDef == 0:
+                rider['DNF'] = 2 
+                captainDef = 1
+            elif rider['DNF'] == 0 and rider["rank"] == 2 and captainDef == 0:
+                rider['DNF'] = 2 
+                captainDef = 1   
+            elif rider['DNF'] == 0 and rider["rank"] == 3 and captainDef == 0:
+                rider['DNF'] = 2 
+                captainDef = 1 
+            elif rider['DNF'] == 0 and rider["rank"] == 4 and captainDef == 0:
+                rider['DNF'] = 2 
+                captainDef = 1  
+            elif rider['DNF'] == 0 and rider["rank"] == 5 and captainDef == 0:
+                rider['DNF'] = 2 
+                captainDef = 1  
+            elif rider['DNF'] == 0 and rider["rank"] == 6 and captainDef == 0:
+                rider['DNF'] = 2 
+                captainDef = 1 
+            elif rider['DNF'] == 0 and rider["rank"] == 7 and captainDef == 0:
+                rider['DNF'] = 2 
+                captainDef = 1
+            elif rider['DNF'] == 0 and rider["rank"] == 8 and captainDef == 0:
+                rider['DNF'] = 2 
+                captainDef = 1  
+            elif rider['DNF'] == 0 and rider["rank"] == 9 and captainDef == 0:
+                rider['DNF'] = 2 
+                captainDef = 1 
+            for i in range(comps[0]["racedays"]): 
+                if rider[str(i + 1)]:
+                    if rider['DNF'] == 2:
+                        rider[str(i + 1)] = rider[str(i + 1)] * 2
+                        total = total + rider[str(i + 1)]
+                        totalday[str(i + 1)] = totalday[str(i + 1)] + rider[str(i + 1)]
+                    else:
+                        total = total + rider[str(i + 1)]
+                        totalday[str(i + 1)] = totalday[str(i + 1)] + rider[str(i + 1)]                  
+            rider["total"] = total
+            totalday["total"] = totalday["total"] + total
+        # add the totalday values to the rider dict
+        riders.append(totalday)
+        # populate the table for the team
+        teamcomplete = teams(riders)
+        # add the name and the table for the team to the userteam dict
+        userteam['username'] = team['username']
+        userteam['table'] = teamcomplete
+        # add the team to the list of teams
+        allteams.append(userteam)
+        # add username and current points to the standing team dict
+        standingsteam['user'] = team['username']
+        standingsteam['points'] = totalday['total']
+        # add the standing of the team to the list of standings
+        standingslist.append(standingsteam)
+    # sort the standingslist and add the rank to each dict
+    standingslist = sorted(standingslist, key = lambda item: item['points'], reverse=True)
+    # iterate over the dicts in standingslist to add the rank
+    rankraised = 1
+    for rank in standingslist:
+        rank['rank'] = rankraised
+        rankraised = rankraised + 1
+    # format the standingslist into a table
+    standingscomplete = Standings(standingslist)        
+    # render the page passing the competition and teams to the page
+    return render_template("archive.html", role=role, comps=comps, allteams=allteams, standings=standingscomplete)
+
 
 
 @app.route("/myteam", methods=["GET", "POST"])
@@ -581,8 +700,9 @@ def editUser():
     """Set user to approved or delete user"""
     if request.method == "POST": 
         role = getRole()
+        db.execute("UPDATE users SET username = :username, role = :role WHERE id = :id", id=request.form.get("userid"), username=request.form.get("username"), role=request.form.get("role"))
         # reload new user screen
-        return redirect('/editUser.html') 
+        return redirect('/editUser') 
 
 @app.route("/deleteUser", methods=["POST"])
 @login_required
@@ -591,15 +711,16 @@ def deleteUser():
     """Delete the selected user"""
     db.execute("DELETE FROM users WHERE id = :id", id=request.form.get("userid"))
     # reload new user screen
-    return redirect('/editUser.html')
+    return redirect('/editUser')
 
 @app.route("/approveUser", methods=["POST"])
 @login_required
 #TODO @admin_required
 def approveUser():
     """Approve the selected user"""
+    db.execute("UPDATE users SET approved = 1 WHERE id = :id", id=request.form.get("userid"))
     # reload new user screen
-    return redirect('/editUser.html')
+    return redirect('/editUser')
      
 
 @app.route("/updatePoints", methods=["POST"])

@@ -4,6 +4,12 @@
     Edit users
 {% endblock %}
 
+{% block adminNav %}
+    {% if role == 2 %}
+    <li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
+    {% endif %}
+{% endblock %}
+
 {% block main %}
     <div>
         <h1>Admin</h1>
@@ -49,9 +55,9 @@
                 {% for user in users %}
                     <form id="{{ user.id ~ user.username }}" action="" method="post">
                         <tr>
-                            <td class=""><input type="number" id="{{user.id}}" readonly value="{{user.id}}"></td>
-                            <td class=""><input type="text" id="{{user.username}}" value="{{user.username}}"></td>
-                            <td><input type="number" id="{{user.role}}" value="{{user.role}}"></td>
+                            <td class=""><input type="number" id="{{user.id}}" readonly value="{{user.id}}" name="userid"></td>
+                            <td class=""><input type="text" id="{{user.username}}" value="{{user.username}}" name="username"></td>
+                            <td><input type="number" id="{{user.role}}" value="{{user.role}}" name="role"></td>
                             <td><button type="submit" formaction="/editUser">Save</button></td>
                         </tr>
                     </form>
