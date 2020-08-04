@@ -137,3 +137,13 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
    -moz-appearance: textfield;
 }
+
+.leaderbord {
+    position: fixed;
+}
+
+@media screen and (max-width: 1380px) {
+    .leaderbord {
+        position: static;
+    }
+  }

@@ -56,17 +56,15 @@
                 {% endif %}
             </div>
             <div class="row">
-                <div class="col-7">
+                <div class="col-sm-3 offset-sm-8 leaderbord">
+                    <div><h2 class="">Leaderboard</h2></div>
+                    {{ standings }} 
+                </div>
+                <div class="col-sm-8">
                     {% for team in allteams %} 
                         <div><h2 class="username">{{ team.username }}</h2></div>
                         {{ team.table }}  
                     {% endfor %} 
-                </div>
-                <div class="col-5">
-                    <div class="position-fixed">
-                        <div><h2 class="">Leaderboard</h2></div>
-                        {{ standings }} 
-                    </div>
                 </div>
             </div>
         {% endfor %}        
