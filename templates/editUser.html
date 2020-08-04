@@ -25,7 +25,7 @@
                 {% for applicant in applicants %}
                     <form id="{{ applicant.id ~ applicant.username }}" action="" method="post">
                         <tr>
-                            <td class=""><input type="number" id="{{applicant.id}}" readonly value="{{applicant.id}}"></td>
+                            <td class=""><input type="number" id="{{applicant.id}}" readonly value="{{applicant.id}}" name="userid"></td>
                             <td class=""><input type="text" id="{{applicant.username}}" readonly value="{{applicant.username}}"></td>
                             <td><button type="submit" formaction="/approveUser">Approve</button></td>
                             <td><button type="submit" formaction="/deleteUser">Delete</button></td>
@@ -50,8 +50,8 @@
                     <form id="{{ user.id ~ user.username }}" action="" method="post">
                         <tr>
                             <td class=""><input type="number" id="{{user.id}}" readonly value="{{user.id}}"></td>
-                            <td class=""><input type="text" id="{{user.username}}" readonly value="{{user.username}}"></td>
-                            <td><input type="number" id="{{user.role}}" readonly value="{{user.role}}"></td>
+                            <td class=""><input type="text" id="{{user.username}}" value="{{user.username}}"></td>
+                            <td><input type="number" id="{{user.role}}" value="{{user.role}}"></td>
                             <td><button type="submit" formaction="/editUser">Save</button></td>
                         </tr>
                     </form>
@@ -59,4 +59,7 @@
             </tbody>
         </table>
     </div>
+    <script>
+        
+    </script>
 {% endblock %}

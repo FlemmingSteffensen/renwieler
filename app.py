@@ -552,13 +552,15 @@ def editUser():
     if request.method == "POST": 
         role = getRole()
         # reload new user screen
-        return render_template("editUser.html", role=role)  
+        return redirect('/editUser.html') 
 
 @app.route("/deleteUser", methods=["POST"])
 @login_required
 #TODO @admin_required
 def deleteUser():
     """Delete the selected user"""
+    db.execute("DELETE FROM users WHERE id = :id", id=request.form.get("userid"))
+    # reload new user screen
     return redirect('/editUser.html')
 
 @app.route("/approveUser", methods=["POST"])
@@ -566,6 +568,7 @@ def deleteUser():
 #TODO @admin_required
 def approveUser():
     """Approve the selected user"""
+    # reload new user screen
     return redirect('/editUser.html')
      
 
