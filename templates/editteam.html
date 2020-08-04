@@ -15,6 +15,8 @@
             {% set ct = namespace(count = 0) %}
             {% set rank = namespace(value = 0) %}
             <form id="editteam" action="/editteam" method="post">
+                <input type="hidden" id="comp" name="comp" value={{activecomp}}>
+                <input type="hidden" id="team_id" name="team_id" value={{team_id}}>
                 <div class="card-columns">
             {% for rider in allRiders %}
                 {% if ct.count == 0 %}
@@ -25,6 +27,7 @@
                                         <h5 class="card-title">Choose 9 riders</h5>
                                     </div>
                                     <p class="card-text">Number the riders you would like to have in your team from 1 to 9. Where 1 is your Captain.</p>
+                                    <p class="card-text">If you want to edit a previous made team, the Mint colored boxes are riders you have chosen.</br> Give the rider you don't want a ranking of 0 and select/rank another rider.</p>
                 {% endif %}
                 {% if rider.rides_for != ns.last_team %}
                     {% set ns.last_team = rider.rides_for %}
@@ -39,10 +42,10 @@
                     {% set rank.value = 0 %}
                         {% for teamRider in teamRiders %} 
                             {% if rider.rider == teamRider.rider %} 
-                                {% set rank.value = teamRider.rank %} 
+                                {% set rank.value = teamRider.rank %}
                             {% endif %}
                         {% endfor %}
-                                        <input type="number" id="{{rider.id}}" name="{{rider.id}}" value="{{rank.value}}" min="0" max="9">
+                                        <input type="number" id="{{rider.id}}" name="{{rider.id}}" value="{{rank.value}}" min="0" max="9" {% if rank.value > 0 %} style="background-color:#3CBC8D;" {% endif %}>
                                         <label for={{rider.id}}>{{rider.rider}} <i>{{rider.nationality}}</i></label>
                                     </div>
                 {% else %}
@@ -50,10 +53,10 @@
                         {% set rank.value = 0 %}
                         {% for teamRider in teamRiders %} 
                             {% if rider.rider == teamRider.rider %} 
-                                {% set rank.value = teamRider.rank %} 
+                                {% set rank.value = teamRider.rank %}
                             {% endif %}
                         {% endfor %}
-                                        <input type="number" id="{{rider.id}}" name="{{rider.id}}" value="{{rank.value}}" min="0" max="9">
+                                        <input type="number" id="{{rider.id}}" name="{{rider.id}}" value="{{rank.value}}" min="0" max="9" {% if rank.value > 0 %} style="background-color:#3CBC8D;" {% endif %}>
                                         <label for={{rider.id}}>{{rider.rider}} <i>{{rider.nationality}}</i></label>
                                     </div>
                 {% endif %}
@@ -71,7 +74,7 @@
                 function checkIfDuplicateExists(w){
                     return new Set(w).size !== w.length 
                 }
-                $("#regteam").on('submit', function(e){
+                $("#editteam").on('submit', function(e){
                     e.preventDefault();
                     var riders = [];
                     $.each($("input[type='number']"), function(){
@@ -87,7 +90,7 @@
                         }
                         else {
                             if (checkIfDuplicateExists(riders)) {
-                                alert("Please rank your riders, use each number once")
+                                alert("Please rank your riders, use each number once. You have used: " + JSON.stringify(riders.sort()));
                             }
                             else {
                                 editteam.submit();

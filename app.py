@@ -367,27 +367,54 @@ def regteam():
 @app.route("/editteam", methods=["GET", "POST"])
 @login_required
 def editteam():
-    """Show the register team page of the current race"""
+    """Show the editteam page of the current race"""
     if request.method == "GET":
+        # Get the user_id to find his/her team for the current race
         user_id = session.get("user_id")
+        # Get the current team_id and competition_id
         editTeamID = db.execute("SELECT c.id, t.id AS team_id \
                                         FROM competitions AS c \
                                         INNER JOIN racetypes AS r ON c.racetype_id = r.id\
                                         INNER JOIN team AS t ON c.id = t.comp_id \
                                             WHERE t.user_id = :user_id \
                                             AND c.reg_active = 'on'", user_id = user_id)
+        activecomp = editTeamID[0]["id"]
+        team_id = editTeamID[0]["team_id"]
+        # Get the riders with info of the users team
         teamRiders = db.execute("SELECT r.rider, r.nationality, r.rides_for, tm.rank, tm.team_id, t.comp_id \
                                     FROM riders AS r \
                                     INNER JOIN team_member AS tm ON r.id = tm.rider_id \
                                     INNER JOIN team AS t ON t.id = tm.team_id \
                                         WHERE t.user_id = :user_id \
-                                        AND t.comp_id = :activecomps \
-                                    ORDER BY tm.rank ASC" , user_id=user_id, activecomps=editTeamID[0]["id"])
+                                        AND t.comp_id = :activecomp \
+                                    ORDER BY tm.rank ASC" , user_id=user_id, activecomp=activecomp)
+        # Get all the riders of the competition
         allRiders = db.execute("Select id, comp_id, rider, nationality, rides_for, contraint_id, comp_id \
                                     FROM riders \
-                                    WHERE comp_id = :activecomps \
-                                    Order by rides_for ASC, rider ASC", activecomps=editTeamID[0]["id"])
-        return render_template("editteam.html", teamRiders=teamRiders, allRiders = allRiders)
+                                    WHERE comp_id = :activecomp \
+                                    Order by rides_for ASC, rider ASC", activecomp=activecomp)
+        # Send team riders and competition riders to the html template
+        return render_template("editteam.html", teamRiders=teamRiders, allRiders = allRiders, activecomp=activecomp, team_id=team_id)
+    """Edit/update the current team"""
+    if request.method == "POST":
+        #user = session.get("user_id")
+        compid = request.form.get("comp")
+        team_id = request.form.get("team_id")
+        # Ensure that a competition is selected
+        if not compid:
+            return apology("Please select a competition before registering a team", 400)
+        # Ensure that users doesn't already have a team
+        elif not team_id:
+            return apology("Please create a team before editing", 400)
+        else:
+            # update riders in team
+            for k,v in request.form.items():
+                if k.isdigit():
+                    if v.isdigit():
+                        f = int(v)
+                        if f > 0: 
+                            db.execute("UPDATE team_member SET rider_id = :rider_id WHERE team_id = :team_id AND rank = :rank", rider_id=k, team_id=team_id, rank=f)
+            return redirect("/myteam")
 
 
 @app.route("/score")
