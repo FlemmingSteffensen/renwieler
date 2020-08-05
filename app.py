@@ -1,4 +1,5 @@
 import os
+import csv
 
 from cs50 import SQL
 from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for
@@ -618,6 +619,54 @@ def editComp():
                    reg_stop=request.form.get("reg_stop"), racedays=request.form.get("racedays"), compid=compid)
         # Redirect user to home page
         return render_template("admin.html", role=role)
+
+@app.route("/uploadRiders", methods=["GET", "POST"])
+@login_required
+#TODO @admin_required
+def uploadRiders():
+    """show page to upload riders file"""
+    if request.method == "GET":
+        #Get the role of the user from de DB
+        role = getRole()
+        compid = request.args.get('activecomp', None)
+        comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop, racedays, reg_active FROM competitions WHERE id = :compid", compid=compid)
+        riders = db.execute("SELECT id, rider, nationality, rides_for FROM riders WHERE comp_id = :compid", compid=compid)
+        return render_template("uploadRiders.html", comps=comps, role=role, riders=riders)
+    """process the uploaded file"""
+    if request.method == "POST":
+        compid = request.form.get("compid")
+        uploadRider = request.files['file']
+        uploadRiderRead = uploadRider.read() 
+        print(uploadRiderRead)      
+        csv_reader = csv.reader(uploadRiderRead, delimiter=',')
+        print(csv_reader)
+        for row in csv_reader:
+            rowRider = db.execute("SELECT id FROM riders WHERE rider = :rider", rider=row[0])
+            if rowRider:
+                db.execute("UPDATE riders SET rider = :rider, nationality = :nationality, rides_for = :rides_for WHERE id = :id", rider=row[0], nationality=row[1], rides_for=row[2], id=rowRider[0]["id"])
+            else:
+                db.execute("INSERT INTO riders (rider, nationality, rides_for) VALUES (:rider, :nationality, :rides_for)", rider=row[0], nationality=row[1], rides_for=row[2])
+        return redirect(url_for('uploadRiders', activecomp=compid))
+
+@app.route("/newRider", methods=["POST"])
+@login_required
+#TODO @admin_required
+def newRider():
+    """insert a new rider for the competition"""
+    db.execute("INSERT INTO riders (rider, comp_id, nationality, rides_for) VALUES (:rider, :compid, :nationality, :rides_for)", rider=request.form.get("rider"), nationality=request.form.get("nationality"), rides_for=request.form.get("rides_for"), compid=request.form.get("compid"))    # reload new user screen
+    compid = request.form.get("compid")
+    return redirect(url_for('uploadRiders', activecomp=compid))
+
+@app.route("/updateRider", methods=["POST"])
+@login_required
+#TODO @admin_required
+def updateRider():
+    """update the rider for the competition"""
+    db.execute("UPDATE riders SET rider = :rider, nationality = :nationality, rides_for = :rides_for WHERE id = :id", rider=request.form.get("rider"), id=request.form.get("rider_id"), nationality=request.form.get("nationality"), rides_for=request.form.get("rides_for"))
+    compid = request.form.get("compid")
+    # reload new user screen
+    return redirect(url_for('uploadRiders', activecomp=compid))
+
 
 @app.route("/editDetails")
 @login_required

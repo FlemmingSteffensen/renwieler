@@ -35,11 +35,12 @@
                                     {% elif comp.racetype_id == 3 %}
                                         <h5 class="card-title">Vuelta Espana {{comp.year}}</h5>            
                                     {% endif %}
-                                    <p class="card-text">Add or change points, register a DNF rider, or change the config of the competition itself</p>
+                                    <p class="card-text"></p>
                                     <div class="btn-group-vertical">
-                                        <a href="{{ url_for('points', activecomp=comp.id) }}" class="btn btn-primary" style="margin: 0.1em;">Edit points</a>
-                                        <a href="{{ url_for('DNF', activecomp=comp.id) }}" class="btn btn-primary" style="margin: 0.1em;">Register DNF</a>
-                                        <a href="{{ url_for('editComp', activecomp=comp.id) }}" class="btn btn-primary" style="margin: 0.1em;">Change config</a>
+                                        <a href="{{ url_for('points', activecomp=comp.id) }}" class="btn btn-primary btn-sm" style="margin: 0.1em;">Edit points</a>
+                                        <a href="{{ url_for('DNF', activecomp=comp.id) }}" class="btn btn-primary btn-sm" style="margin: 0.1em;">Register DNF</a>
+                                        <a href="{{ url_for('editComp', activecomp=comp.id) }}" class="btn btn-primary btn-sm" style="margin: 0.1em;">Change config</a>
+                                        <a href="{{ url_for('uploadRiders', activecomp=comp.id) }}" class="btn btn-primary btn-sm" style="margin: 0.1em;">Upload rider list</a>
                                     </div>
                                 </div>
                             </div>

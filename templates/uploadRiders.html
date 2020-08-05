@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Upload a list of riders
+{% endblock %}
+
+{% block adminNav %}
+    {% if role == 2 %}
+        <li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
+    {% endif %}
+{% endblock %}
+
+{% block main %}
+    {% for comp in comps %}    
+        <div>
+            {% if comp.racetype_id == 1 %}
+                <h1 class="">Tour de France {{comp.year}}</h1>
+            {% elif comp.racetype_id == 2 %}
+                <h1 class="">Giro di Italia {{comp.year}}</h1>
+            {% elif comp.racetype_id == 3 %}
+                <h1 class="">Vuelta Espana {{comp.year}}</h1>
+            {% else %}
+                <h1 class="">Unknown competition</h1>            
+            {% endif %}
+        </div>
+        <br>
+        <h5>Choose a file to upload</h5>
+        <form id="upload" action="/uploadRiders" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="compid" value="{{comp.id}}">
+            <input type=file name=file>
+            <input type=submit>
+        </form>
+        <br>
+        <h5>Add new rider manually</h5>
+        <form id="newrider" action="/newRider" method="POST">
+            <table class="table table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Nationality</th>
+                        <th>Rides for</th>
+                        <th>Save</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <input type="hidden" name="compid" value="{{comp.id}}">
+                        <td class=""><input type="text" value="" name="rider"></td>
+                        <td class=""><input type="text" value="" name="nationality"></td>
+                        <td class=""><input type="text" value="" name="rides_for"></td>
+                        <td><button type="submit" formaction="/newRider">Save</button></td>
+                    </tr>
+                </tbody>
+            </table> 
+        </form>
+        <br>
+        <h5>Edit riders manually</h5>
+        <table class="table table-striped table-sm">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Nationality</th>
+                    <th>Rides for</th>
+                    <th>Save</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rider in riders %}    
+                    <form id="{{rider.id}}" action="" method="POST">
+                        <tr>
+                            <input type="hidden" name="compid" value="{{comp.id}}">
+                            <input type="hidden" name="rider_id" value="{{rider.id}}">
+                            <td class=""><input type="text" value="{{rider.rider}}" name="rider"></td>
+                            <td class=""><input type="text" value="{{rider.nationality}}" name="nationality"></td>
+                            <td class=""><input type="text" value="{{rider.rides_for}}" name="rides_for"></td>
+                            <td><button type="submit" formaction="/updateRider">Update</button></td>
+                        </tr>
+                    </form>    
+                {% endfor %}
+            </tbody>
+        </table>     
+    {% endfor %}
+{% endblock %}
