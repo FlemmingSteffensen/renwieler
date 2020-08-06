@@ -39,6 +39,7 @@
                         <th>Name</th>
                         <th>Nationality</th>
                         <th>Rides for</th>
+                        <th>Price</th>
                         <th>Save</th>
                     </tr>
                 </thead>
@@ -48,6 +49,7 @@
                         <td class=""><input type="text" value="" name="rider"></td>
                         <td class=""><input type="text" value="" name="nationality"></td>
                         <td class=""><input type="text" value="" name="rides_for"></td>
+                        <td class=""><input type="number" value="" name="price"></td>
                         <td><button type="submit" formaction="/newRider">Save</button></td>
                     </tr>
                 </tbody>
@@ -61,6 +63,7 @@
                     <th>Name</th>
                     <th>Nationality</th>
                     <th>Rides for</th>
+                    <th>Price</th>
                     <th>Save</th>
                 </tr>
             </thead>
@@ -73,6 +76,7 @@
                             <td class=""><input type="text" value="{{rider.rider}}" name="rider"></td>
                             <td class=""><input type="text" value="{{rider.nationality}}" name="nationality"></td>
                             <td class=""><input type="text" value="{{rider.rides_for}}" name="rides_for"></td>
+                            <td class=""><input type="number" value="{{rider.price}}" name="price"></td>
                             <td><button type="submit" formaction="/updateRider">Update</button></td>
                         </tr>
                     </form>    
