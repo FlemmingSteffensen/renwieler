@@ -147,3 +147,11 @@ input[type="number"] {
         position: static;
     }
   }
+
+  .money {
+    border-radius: 100%;
+    background: #fccf51;
+    border: solid 1px;
+    border-color: black;
+    white-space: pre;
+  }

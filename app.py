@@ -449,7 +449,7 @@ def myteam():
                                             AND c.reg_active = 'on' \
                                         ORDER BY c.startdate DESC", user_id = user_id)
         canRegisterOrEdit = db.execute("SELECT id FROM competitions WHERE reg_active = 'on' AND strftime('%s', reg_stop) > strftime('%s', 'now') ")
-        riders = db.execute("SELECT r.rider, r.nationality, r.rides_for, tm.team_id, t.comp_id \
+        riders = db.execute("SELECT r.rider, r.nationality, r.rides_for, tm.team_id, r.price, t.comp_id \
                                     FROM riders AS r \
                                     INNER JOIN team_member AS tm ON r.id = tm.rider_id \
                                     INNER JOIN team AS t ON t.id = tm.team_id \
@@ -468,7 +468,7 @@ def regteam():
     if request.method == "GET":
         compid = request.args.get('activecomp', None)
         # Get all the riders of the competition
-        riders = db.execute("SELECT id, comp_id, rider, nationality, rides_for, comp_id FROM riders WHERE comp_id = :compid Order by rides_for ASC, rider ASC", compid=compid)
+        riders = db.execute("SELECT id, comp_id, rider, nationality, rides_for, price FROM riders WHERE comp_id = :compid Order by rides_for ASC, rider ASC", compid=compid)
         # Direct user to register team page
         return render_template("regteam.html", riders=riders)
 
@@ -503,13 +503,14 @@ def editteam():
         # Get the user_id to find his/her team for the current race
         user_id = session.get("user_id")
         # Get the current team_id and competition_id
-        editTeamID = db.execute("SELECT c.id, t.id AS team_id \
+        editTeamID = db.execute("SELECT c.id, c.total_price t.id AS team_id \
                                         FROM competitions AS c \
                                         INNER JOIN racetypes AS r ON c.racetype_id = r.id\
                                         INNER JOIN team AS t ON c.id = t.comp_id \
                                             WHERE t.user_id = :user_id \
                                             AND c.reg_active = 'on'", user_id = user_id)
         activecomp = editTeamID[0]["id"]
+        total_price = editTeamID[0]["total_price"]
         team_id = editTeamID[0]["team_id"]
         # Get the riders with info of the users team
         teamRiders = db.execute("SELECT r.rider, r.nationality, r.rides_for, tm.rank, tm.team_id, t.comp_id \
@@ -520,12 +521,12 @@ def editteam():
                                         AND t.comp_id = :activecomp \
                                     ORDER BY tm.rank ASC" , user_id=user_id, activecomp=activecomp)
         # Get all the riders of the competition
-        allRiders = db.execute("Select id, comp_id, rider, nationality, rides_for, contraint_id, comp_id \
+        allRiders = db.execute("Select id, comp_id, rider, nationality, rides_for, price, comp_id \
                                     FROM riders \
                                     WHERE comp_id = :activecomp \
                                     Order by rides_for ASC, rider ASC", activecomp=activecomp)
         # Send team riders and competition riders to the html template
-        return render_template("editteam.html", teamRiders=teamRiders, allRiders = allRiders, activecomp=activecomp, team_id=team_id)
+        return render_template("editteam.html", teamRiders=teamRiders, allRiders = allRiders, activecomp=activecomp, team_id=team_id, total_price=total_price)
     """Edit/update the current team"""
     if request.method == "POST":
         #user = session.get("user_id")

@@ -13,6 +13,20 @@
         {% if riders %}
             {% set ns = namespace(last_team = "nothing") %}
             {% set ct = namespace(count = 0) %}
+            <div class="row">
+                <div class="col-sm-3 offset-sm-8 leaderbord">
+                    <div class="card border-success">
+                        <div class="card-body text-success">
+                            <div class="card-header">
+                                <h2 class="card-title">Selected team</h2>
+                            </div>
+                            <p class="card-text">Total money:</p>
+                            <p class="card-text">Money left: </p>
+                            <h4 class="card-text">Your riders: </h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-8">
             <form id="regteam" action="/regteam" method="post">
                 <input type="hidden" id="comp" name="comp" value={{request.args.get('activecomp')}}>
                 <div class="card-columns">
@@ -37,12 +51,12 @@
                                     </div>
                                     <div>
                                         <input type="number" id="{{rider.id}}" name="{{rider.id}}" value="0" min="0" max="9">
-                                        <label for={{rider.id}}>{{rider.rider}} <i>{{rider.nationality}}</i></label>
+                                        <label for={{rider.id}}><b class="money"> {{rider.price}} </b> {{rider.rider}} <i>{{rider.nationality}}</i></label>
                                     </div>
                 {% else %}
                                     <div>
                                         <input type="number" id="{{rider.id}}" name="{{rider.id}}" value="0" min="0" max="9">
-                                        <label for={{rider.id}}>{{rider.rider}} <i>{{rider.nationality}}</i></label>
+                                        <label for={{rider.id}}><b class="money"> {{rider.price}} </b> {{rider.rider}} <i>{{rider.nationality}}</i></label>
                                     </div>
                 {% endif %}
             {% endfor %}
@@ -52,6 +66,8 @@
                 </div>
                 <button class="btn btn-primary" type="submit">Submit</button>
             </form>
+        </div>
+        </div>
             <script>
                 //Checking if 9 riders are selected and follow the competition rules
                 regteam = document.getElementById("regteam");
