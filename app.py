@@ -469,8 +469,11 @@ def regteam():
         compid = request.args.get('activecomp', None)
         # Get all the riders of the competition
         riders = db.execute("SELECT id, comp_id, rider, nationality, rides_for, price FROM riders WHERE comp_id = :compid Order by rides_for ASC, rider ASC", compid=compid)
+        # Get the total price for buying riders
+        price_total = db.execute("SELECT total_price FROM competitions WHERE id = :compid", compid=compid)
+        total_price = price_total[0]["total_price"]
         # Direct user to register team page
-        return render_template("regteam.html", riders=riders)
+        return render_template("regteam.html", riders=riders, total_price=total_price)
 
     if request.method == "POST":
         user = session.get("user_id")

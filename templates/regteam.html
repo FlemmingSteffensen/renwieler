@@ -13,6 +13,7 @@
         {% if riders %}
             {% set ns = namespace(last_team = "nothing") %}
             {% set ct = namespace(count = 0) %}
+            {% set money = namespace(class = "money") %}
             <div class="row">
                 <div class="col-sm-3 offset-sm-8 leaderbord">
                     <div class="card border-success">
@@ -20,9 +21,20 @@
                             <div class="card-header">
                                 <h2 class="card-title">Selected team</h2>
                             </div>
-                            <p class="card-text">Total money:</p>
+                            <p class="card-text">Total money: {{total_price}}</p>
                             <p class="card-text">Money left: </p>
                             <h4 class="card-text">Your riders: </h4>
+                            <ol>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                            </ol>
                         </div>
                     </div>
                 </div>
@@ -39,6 +51,23 @@
                                         <h5 class="card-title">Choose 9 riders</h5>
                                     </div>
                                     <p class="card-text">Number the riders you would like to have in your team from 1 to 9. Where 1 is your Captain.</p>
+                                    <p>Some riders cost money, you can see the total money you can spend, and the money you have left in the green box.</p>
+                                    <ul>
+                                        <li style="color:black">Free: <b class="money"> 0 </b></li>
+                                        <li style="color:black">Bronze: <b class="bronze"> 1 </b></li>
+                                        <li style="color:black">Silver: <b class="silver"> 2 </b></li>
+                                        <li style="color:black">Gold: <b class="gold"> 3 </b></li>
+                                    </ul>
+                                    <p>The riders you have currently selected are visible in the same box as well as their ranking</p>
+                {% endif %}
+                {% if rider.price == 3 %}
+                    {% set money.class = "gold" %}
+                {% elif rider.price == 2 %}
+                    {% set money.class = "silver" %}
+                {% elif rider.price == 1 %}
+                    {% set money.class = "bronze" %}
+                {% else %}
+                    {% set money.class = "money" %}
                 {% endif %}
                 {% if rider.rides_for != ns.last_team %}
                     {% set ns.last_team = rider.rides_for %}
@@ -51,12 +80,14 @@
                                     </div>
                                     <div>
                                         <input type="number" id="{{rider.id}}" name="{{rider.id}}" value="0" min="0" max="9">
-                                        <label for={{rider.id}}><b class="money"> {{rider.price}} </b> {{rider.rider}} <i>{{rider.nationality}}</i></label>
+                                        <label for={{rider.id}}>
+                                            <b class="{{money.class}}"> {{rider.price}} </b> {{rider.rider}} <i>{{rider.nationality}}</i></label>
                                     </div>
                 {% else %}
                                     <div>
                                         <input type="number" id="{{rider.id}}" name="{{rider.id}}" value="0" min="0" max="9">
-                                        <label for={{rider.id}}><b class="money"> {{rider.price}} </b> {{rider.rider}} <i>{{rider.nationality}}</i></label>
+                                        <label for={{rider.id}}>
+                                            <b class="{{money.class}}"> {{rider.price}} </b>  {{rider.rider}} <i>{{rider.nationality}}</i></label>
                                     </div>
                 {% endif %}
             {% endfor %}
@@ -69,12 +100,20 @@
         </div>
         </div>
             <script>
+                //Get the currently selected riders
+                function getSelectedRiders() {
+                    currentRiders = document.getElementById("regteam");
+                    
+                }
                 //Checking if 9 riders are selected and follow the competition rules
                 regteam = document.getElementById("regteam");
                 // Check for duplicates from stackoverflow https://stackoverflow.com/questions/49215358/checking-for-duplicate-strings-in-javascript-array/49215411
                 function checkIfDuplicateExists(w){
                     return new Set(w).size !== w.length 
                 }
+                regteam.addEventListener('change', function() {
+                    getSelectedRiders();
+                });
                 $("#regteam").on('submit', function(e){
                     e.preventDefault();
                     var riders = [];

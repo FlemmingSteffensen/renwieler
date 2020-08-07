@@ -148,9 +148,30 @@ input[type="number"] {
     }
   }
 
-  .money {
+.money {
     border-radius: 100%;
-    background: #fccf51;
+    background-color: lightyellow;
+    border: solid 1px;
+    border-color: black;
+    white-space: pre;
+  }
+.bronze {
+    border-radius: 100%;
+    background: lightcoral;
+    border: solid 1px;
+    border-color: black;
+    white-space: pre;
+  }
+.silver {
+    border-radius: 100%;
+    background: grey;
+    border: solid 1px;
+    border-color: black;
+    white-space: pre;
+  }
+.gold {
+    border-radius: 100%;
+    background: darkgoldenrod;
     border: solid 1px;
     border-color: black;
     white-space: pre;
