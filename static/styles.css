@@ -99,7 +99,7 @@ input[type="number"].points, textarea {
     border-top: 2px double rgb(0, 0, 0);
 }
 
-tbody > *:nth-child(10) > *:nth-child(3){
+.DNF tbody > *:nth-child(10) > *:nth-child(3){
     font-weight: bold;
 }
 

@@ -60,6 +60,7 @@ def index():
             .add_column('rider', Col('Rider', column_html_attrs={'class': 'rider'}))
         for i in range(comps2[0]["racedays"]):
             teams.add_column(str(i + 1), Col(str(i + 1), column_html_attrs={'class': 'day'}))
+        teams.add_column('final', Col('Final', column_html_attrs={'class': 'day'}))
         teams.add_column('total', Col('TOTAL', column_html_attrs={'class': 'total'}))
         # Create a table template to hold the current standing
         class Standings(Table):
@@ -80,7 +81,7 @@ def index():
             # Select all riders on the team
             riders = db.execute("SELECT r.DNF, tm.rank, r.rider, p.day1 AS '1', p.day2 AS '2', p.day3 AS '3', p.day4 AS '4', p.day5 AS '5', p.day6 AS '6', p.day7 AS '7', p.day8 AS '8', p.day9 AS '9', p.day10 AS '10', p.day11 AS '11', \
                                 p.day12 AS '12', p.day13 AS '13', p.day14 AS '14', p.day15 AS '15', p.day16 AS '16', p.day17 AS '17', p.day18 AS '18', p.day19 AS '19', p.day20 AS '20', p.day21 AS '21', p.day22 AS '22', p.day23 AS '23', p.day24 AS '24', p.day25 AS '25', \
-                                p.day26 AS '26', p.day27 AS '27', p.day28 AS '28', p.day29 AS '29', p.day30 AS '30'   \
+                                p.day26 AS '26', p.day27 AS '27', p.day28 AS '28', p.day29 AS '29', p.day30 AS '30', p.final   \
                                     FROM riders r \
                                     INNER JOIN team_member tm ON r.id = tm.rider_id \
                                     INNER JOIN team t ON t.id = tm.team_id \
@@ -88,7 +89,7 @@ def index():
                                         WHERE t.id = :team_id \
                                     ORDER BY tm.rank ASC", team_id=team["id"])
             # initialize a dict to hold the total per day
-            totalday = {'DNF':0, 'rank':'', 'rider':'TOTAL', '1':0, '2':0, '3':0, '4':0, '5':0, '6':0, '7':0, '8':0, '9':0, '10':0, '11':0, '12':0, '13':0, '14':0, '15':0, '16':0, '17':0, '18':0, '19':0, '20':0, '21':0, '22':0, '23':0, '24':0, '25':0, '26':0, '27':0, '28':0, '29':0, '30':0, 'total':0}
+            totalday = {'DNF':0, 'rank':'', 'rider':'TOTAL', '1':0, '2':0, '3':0, '4':0, '5':0, '6':0, '7':0, '8':0, '9':0, '10':0, '11':0, '12':0, '13':0, '14':0, '15':0, '16':0, '17':0, '18':0, '19':0, '20':0, '21':0, '22':0, '23':0, '24':0, '25':0, '26':0, '27':0, '28':0, '29':0, '30':0, 'final':0, 'total':0}
             captainDef = 0
             # Select the points per day per rider
             for rider in riders:
@@ -129,8 +130,11 @@ def index():
                         else:
                             total = total + rider[str(i + 1)]
                             totalday[str(i + 1)] = totalday[str(i + 1)] + rider[str(i + 1)]                  
-                rider["total"] = total
-                totalday["total"] = totalday["total"] + total
+                if rider['DNF'] == 2:
+                    rider["final"] = rider["final"] * 2
+                rider["total"] = total + rider["final"]
+                totalday["final"] = totalday["final"] + rider["final"]
+                totalday["total"] = totalday["total"] + rider["total"] 
             # add the totalday values to the rider dict
             riders.append(totalday)
             # populate the table for the team
@@ -328,6 +332,7 @@ def archive():
         .add_column('rider', Col('Rider', column_html_attrs={'class': 'rider'}))
     for i in range(comps[0]["racedays"]):
         teams.add_column(str(i + 1), Col(str(i + 1), column_html_attrs={'class': 'day'}))
+    teams.add_column('final', Col('Final', column_html_attrs={'class': 'day'}))
     teams.add_column('total', Col('TOTAL', column_html_attrs={'class': 'total'}))
     # Create a table template to hold the current standing
     class Standings(Table):
@@ -348,7 +353,7 @@ def archive():
         # Select all riders on the team
         riders = db.execute("SELECT r.DNF, tm.rank, r.rider, p.day1 AS '1', p.day2 AS '2', p.day3 AS '3', p.day4 AS '4', p.day5 AS '5', p.day6 AS '6', p.day7 AS '7', p.day8 AS '8', p.day9 AS '9', p.day10 AS '10', p.day11 AS '11', \
                             p.day12 AS '12', p.day13 AS '13', p.day14 AS '14', p.day15 AS '15', p.day16 AS '16', p.day17 AS '17', p.day18 AS '18', p.day19 AS '19', p.day20 AS '20', p.day21 AS '21', p.day22 AS '22', p.day23 AS '23', p.day24 AS '24', p.day25 AS '25', \
-                            p.day26 AS '26', p.day27 AS '27', p.day28 AS '28', p.day29 AS '29', p.day30 AS '30'   \
+                            p.day26 AS '26', p.day27 AS '27', p.day28 AS '28', p.day29 AS '29', p.day30 AS '30', p.final   \
                                 FROM riders r \
                                 INNER JOIN team_member tm ON r.id = tm.rider_id \
                                 INNER JOIN team t ON t.id = tm.team_id \
@@ -356,7 +361,7 @@ def archive():
                                     WHERE t.id = :team_id \
                                 ORDER BY tm.rank ASC", team_id=team["id"])
         # initialize a dict to hold the total per day
-        totalday = {'DNF':0, 'rank':'', 'rider':'TOTAL', '1':0, '2':0, '3':0, '4':0, '5':0, '6':0, '7':0, '8':0, '9':0, '10':0, '11':0, '12':0, '13':0, '14':0, '15':0, '16':0, '17':0, '18':0, '19':0, '20':0, '21':0, '22':0, '23':0, '24':0, '25':0, '26':0, '27':0, '28':0, '29':0, '30':0, 'total':0}
+        totalday = {'DNF':0, 'rank':'', 'rider':'TOTAL', '1':0, '2':0, '3':0, '4':0, '5':0, '6':0, '7':0, '8':0, '9':0, '10':0, '11':0, '12':0, '13':0, '14':0, '15':0, '16':0, '17':0, '18':0, '19':0, '20':0, '21':0, '22':0, '23':0, '24':0, '25':0, '26':0, '27':0, '28':0, '29':0, '30':0, 'final':0, 'total':0}
         captainDef = 0
         # Select the points per day per rider
         for rider in riders:
@@ -396,9 +401,12 @@ def archive():
                         totalday[str(i + 1)] = totalday[str(i + 1)] + rider[str(i + 1)]
                     else:
                         total = total + rider[str(i + 1)]
-                        totalday[str(i + 1)] = totalday[str(i + 1)] + rider[str(i + 1)]                  
-            rider["total"] = total
-            totalday["total"] = totalday["total"] + total
+                        totalday[str(i + 1)] = totalday[str(i + 1)] + rider[str(i + 1)]                                               
+            if rider['DNF'] == 2:
+                rider["final"] = rider["final"] * 2
+            rider["total"] = total + rider["final"]
+            totalday["final"] = totalday["final"] + rider["final"]
+            totalday["total"] = totalday["total"] + rider["total"]        
         # add the totalday values to the rider dict
         riders.append(totalday)
         # populate the table for the team
@@ -460,7 +468,7 @@ def regteam():
     if request.method == "GET":
         compid = request.args.get('activecomp', None)
         # Get all the riders of the competition
-        riders = db.execute("SELECT id, comp_id, rider, nationality, rides_for, contraint_id, comp_id FROM riders WHERE comp_id = :compid Order by rides_for ASC, rider ASC", compid=compid)
+        riders = db.execute("SELECT id, comp_id, rider, nationality, rides_for, comp_id FROM riders WHERE comp_id = :compid Order by rides_for ASC, rider ASC", compid=compid)
         # Direct user to register team page
         return render_template("regteam.html", riders=riders)
 
@@ -687,7 +695,7 @@ def points():
     compid = request.args.get('activecomp', None)
     comps = db.execute("SELECT id, racetype_id, year FROM competitions WHERE id = :compid", compid=compid)
     # Get all the riders of the competition with their points per day
-    riderpoints = db.execute("SELECT ri.id, ri.rider, po.day1, po.day2, po.day3, po.day4, po.day5, po.day6, po.day7, po.day8, po.day9, po.day10, po.day11, po.day12, po.day13, po.day14, po.day15, po.day16, po.day17, po.day18, po.day19, po.day20, po.day21, po.day22, po.day23, po.day24, po.day25, po.day26, po.day27, po.day28, po.day29, po.day30 FROM riders ri LEFT JOIN points po ON po.rider_id = ri.id WHERE ri.comp_id = :compid ORDER BY ri.rider ASC", compid=compid)
+    riderpoints = db.execute("SELECT ri.id, ri.rider, po.day1, po.day2, po.day3, po.day4, po.day5, po.day6, po.day7, po.day8, po.day9, po.day10, po.day11, po.day12, po.day13, po.day14, po.day15, po.day16, po.day17, po.day18, po.day19, po.day20, po.day21, po.day22, po.day23, po.day24, po.day25, po.day26, po.day27, po.day28, po.day29, po.day30, po.final FROM riders ri LEFT JOIN points po ON po.rider_id = ri.id WHERE ri.comp_id = :compid ORDER BY ri.rider ASC", compid=compid)
     # Get the number of days for the competition
     daysInComp = db.execute("SELECT racedays FROM competitions WHERE id = :compid", compid=compid)
     # render the page passing the information to the page
@@ -787,7 +795,7 @@ def updatePoints():
                                 day8 = :day8, day9 = :day9, day10 = :day10, day11 = :day11, day12 = :day12, day13 = :day13, day14 = :day14, \
                                 day15 = :day15, day16 = :day16, day17 = :day17, day18 = :day18, day19 = :day19, day20 = :day20, day21 = :day21, \
                                 day22 = :day22, day23 = :day23, day24 = :day24, day25 = :day25, day26 = :day26, day27 = :day27, day28 = :day28, \
-                                day29 = :day29, day30 = :day30 \
+                                day29 = :day29, day30 = :day30, final = :final \
                             WHERE rider_id = :rider", rider=riders
                                 , day1=request.form.get(rider + " 1"), day2=request.form.get(rider + " 2"), day3=request.form.get(rider + " 3")
                                 , day4=request.form.get(rider + " 4"), day5=request.form.get(rider + " 5"), day6=request.form.get(rider + " 6")
@@ -798,14 +806,15 @@ def updatePoints():
                                 , day19=request.form.get(rider + " 19"), day20=request.form.get(rider + " 20"), day21=request.form.get(rider + " 21")
                                 , day22=request.form.get(rider + " 22"), day23=request.form.get(rider + " 23"), day24=request.form.get(rider + " 24")
                                 , day25=request.form.get(rider + " 25"), day26=request.form.get(rider + " 26"), day27=request.form.get(rider + " 27")
-                                , day28=request.form.get(rider + " 28"), day29=request.form.get(rider + " 29"), day30=request.form.get(rider + " 30")) 
+                                , day28=request.form.get(rider + " 28"), day29=request.form.get(rider + " 29"), day30=request.form.get(rider + " 30")
+                                , final=request.form.get(rider + "final")) 
             else:
                 db.execute("INSERT INTO points (rider_id, day1, day2, day3, day4, day5, day6, day7, day8, day9, day10, day11, \
                                 day12, day13, day14, day15, day16, day17, day18, day19, day20, day21, day22, day23, day24, day25, \
-                                day26, day27, day28, day29, day30) \
+                                day26, day27, day28, day29, day30, final) \
                             VALUES (:rider, :day1, :day2, :day3, :day4, :day5, :day6, :day7, :day8, :day9, :day10, :day11, :day12, \
                                 :day13, :day14, :day15, :day16, :day17, :day18, :day19, :day20, :day21, :day22, :day23, :day24,\
-                                :day25, :day26, :day27, :day28, :day29, :day30)", rider=riders 
+                                :day25, :day26, :day27, :day28, :day29, :day30, :final)", rider=riders 
                                 , day1=request.form.get(rider + " 1"), day2=request.form.get(rider + " 2"), day3=request.form.get(rider + " 3")
                                 , day4=request.form.get(rider + " 4"), day5=request.form.get(rider + " 5"), day6=request.form.get(rider + " 6")
                                 , day7=request.form.get(rider + " 7"), day8=request.form.get(rider + " 8"), day9=request.form.get(rider + " 9")
@@ -815,7 +824,8 @@ def updatePoints():
                                 , day19=request.form.get(rider + " 19"), day20=request.form.get(rider + " 20"), day21=request.form.get(rider + " 21")
                                 , day22=request.form.get(rider + " 22"), day23=request.form.get(rider + " 23"), day24=request.form.get(rider + " 24")
                                 , day25=request.form.get(rider + " 25"), day26=request.form.get(rider + " 26"), day27=request.form.get(rider + " 27")
-                                , day28=request.form.get(rider + " 28"), day29=request.form.get(rider + " 29"), day30=request.form.get(rider + " 30"))
+                                , day28=request.form.get(rider + " 28"), day29=request.form.get(rider + " 29"), day30=request.form.get(rider + " 30")
+                                , final=request.form.get(rider + "final"))
     compid=request.form.get("compid")
     return redirect(url_for('points', activecomp=compid))
 
