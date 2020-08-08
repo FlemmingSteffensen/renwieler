@@ -62,7 +62,7 @@ main img
     text-align: left;
 }
 
-#myteam {
+.myteam {
     text-align: left;
 }
 
@@ -150,28 +150,28 @@ input[type="number"] {
 
 .money {
     border-radius: 100%;
-    background-color: lightyellow;
+    background-color: white;
     border: solid 1px;
     border-color: black;
     white-space: pre;
   }
 .bronze {
     border-radius: 100%;
-    background: lightcoral;
+    background: #CD7F32;
     border: solid 1px;
     border-color: black;
     white-space: pre;
   }
 .silver {
     border-radius: 100%;
-    background: grey;
+    background: #C0C0C0;
     border: solid 1px;
     border-color: black;
     white-space: pre;
   }
 .gold {
     border-radius: 100%;
-    background: darkgoldenrod;
+    background: #FFD700;
     border: solid 1px;
     border-color: black;
     white-space: pre;

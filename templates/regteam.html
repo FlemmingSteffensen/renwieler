@@ -24,16 +24,16 @@
                             <p class="card-text">Total money: {{total_price}}</p>
                             <p class="card-text">Money left: </p>
                             <h4 class="card-text">Your riders: </h4>
-                            <ol>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
+                            <ol class="myteam">
+                                <li id="1"></li>
+                                <li id="2"></li>
+                                <li id="3"></li>
+                                <li id="4"></li>
+                                <li id="5"></li>
+                                <li id="6"></li>
+                                <li id="7"></li>
+                                <li id="8"></li>
+                                <li id="9"></li>
                             </ol>
                         </div>
                     </div>
@@ -79,13 +79,13 @@
                                         <h5 class="card-title">{{ns.last_team}}</h5>
                                     </div>
                                     <div>
-                                        <input type="number" id="{{rider.id}}" name="{{rider.id}}" value="0" min="0" max="9">
+                                        <input type="number" id="{{rider.rider}}" name="{{rider.id}}" value="0" min="0" max="9">
                                         <label for={{rider.id}}>
                                             <b class="{{money.class}}"> {{rider.price}} </b> {{rider.rider}} <i>{{rider.nationality}}</i></label>
                                     </div>
                 {% else %}
                                     <div>
-                                        <input type="number" id="{{rider.id}}" name="{{rider.id}}" value="0" min="0" max="9">
+                                        <input type="number" id="{{rider.rider}}" name="{{rider.id}}" value="0" min="0" max="9">
                                         <label for={{rider.id}}>
                                             <b class="{{money.class}}"> {{rider.price}} </b>  {{rider.rider}} <i>{{rider.nationality}}</i></label>
                                     </div>
@@ -100,17 +100,34 @@
         </div>
         </div>
             <script>
-                //Get the currently selected riders
-                function getSelectedRiders() {
-                    currentRiders = document.getElementById("regteam");
-                    
-                }
                 //Checking if 9 riders are selected and follow the competition rules
                 regteam = document.getElementById("regteam");
                 // Check for duplicates from stackoverflow https://stackoverflow.com/questions/49215358/checking-for-duplicate-strings-in-javascript-array/49215411
                 function checkIfDuplicateExists(w){
                     return new Set(w).size !== w.length 
                 }
+                //When change in form, function to get the currently selected riders
+                function getSelectedRiders() {
+                    var form = document.getElementsByTagName("form");
+                    var inputs = form[0].getElementsByTagName("input");
+                    var chosenRiders = {};
+                    var ranking = [];
+
+                    // Get the selected riders (with ranking > 0)
+                    for(var i=0; i< inputs.length; i++) {
+                        console.log("in");
+                        if(inputs[i].value > 0 && inputs[i].name != "comp") {
+                            chosenRiders[inputs[i].id] = inputs[i].value;
+                            ranking.push(inputs[i].value);
+                        }
+                    }
+                    // Paste riders to selected riders box
+                    let entries = Object.entries(chosenRiders);
+                    for(const[id,value] of entries) {
+                        document.getElementById(value).innerHTML = id;
+                    }                        
+                }
+
                 regteam.addEventListener('change', function() {
                     getSelectedRiders();
                 });
