@@ -511,7 +511,7 @@ def editteam():
         # Get the user_id to find his/her team for the current race
         user_id = session.get("user_id")
         # Get the current team_id and competition_id
-        editTeamID = db.execute("SELECT c.id, c.total_price t.id AS team_id \
+        editTeamID = db.execute("SELECT c.id, c.total_price, t.id AS team_id \
                                         FROM competitions AS c \
                                         INNER JOIN racetypes AS r ON c.racetype_id = r.id\
                                         INNER JOIN team AS t ON c.id = t.comp_id \
