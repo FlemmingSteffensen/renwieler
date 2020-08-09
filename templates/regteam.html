@@ -114,13 +114,13 @@
                     var inputs = form[0].getElementsByTagName("input");
                     var chosenRiders = {};
 
-                    // Remove previous riders selected riders box
+                    // Remove previous riders selected riders box 
                     for(var i = 1; i < 10; i++) {
                         document.getElementById(i).innerHTML = "";
                     }
 
                     // Get the selected riders (with ranking > 0)
-                    for(var i=0; i< inputs.length; i++) {
+                    for(var i = 0; i < inputs.length; i++) {
                         console.log("in");
                         if(inputs[i].value > 0 && inputs[i].name != "comp") {
                             chosenRiders[inputs[i].id] = inputs[i].value;
@@ -128,8 +128,23 @@
                     }
                     // Paste riders to selected riders box
                     let entries = Object.entries(chosenRiders);
+                    var usedRanking = "";
+                    var rankingPlus = "";
                     for(const[id,value] of entries) {
-                        document.getElementById(value).innerHTML = id;
+                        usedRanking = document.getElementById(value).innerHTML;
+
+                        // If ranking number is already used, show both (or more) selected riders
+                        if(usedRanking.length != 0) {
+                            if(rankingPlus.length != 0) {
+                                rankingPlus = rankingPlus.concat(" AND ", id);
+                            } else {
+                                rankingPlus = usedRanking.concat(" AND ", id);
+                            }
+                            document.getElementById(value).innerHTML = rankingPlus;
+                        } else {
+                            document.getElementById(value).innerHTML = id;
+                        }
+                        
                     }                        
                 }
                 // Catches the change in form and calls getSelectedRiders
