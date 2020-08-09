@@ -91,6 +91,7 @@ def index():
                                     ORDER BY tm.rank ASC", team_id=team["id"])
             # initialize a dict to hold the total per day
             totalday = {'DNF':0, 'rank':'', 'rider':'TOTAL', '1':0, '2':0, '3':0, '4':0, '5':0, '6':0, '7':0, '8':0, '9':0, '10':0, '11':0, '12':0, '13':0, '14':0, '15':0, '16':0, '17':0, '18':0, '19':0, '20':0, '21':0, '22':0, '23':0, '24':0, '25':0, '26':0, '27':0, '28':0, '29':0, '30':0, 'final':0, 'total':0}
+            cumulativeday = {'DNF':0, 'rank':'', 'rider':'CUMULATIVE', '1':0, '2':0, '3':0, '4':0, '5':0, '6':0, '7':0, '8':0, '9':0, '10':0, '11':0, '12':0, '13':0, '14':0, '15':0, '16':0, '17':0, '18':0, '19':0, '20':0, '21':0, '22':0, '23':0, '24':0, '25':0, '26':0, '27':0, '28':0, '29':0, '30':0, 'final':0, 'total':0}
             captainDef = 0
             # Select the points per day per rider
             for rider in riders:
@@ -122,22 +123,32 @@ def index():
                 elif rider['DNF'] == 0 and rider["rank"] == 9 and captainDef == 0:
                     rider['DNF'] = 2 
                     captainDef = 1 
+                cumulativeTemp = 0
                 for i in range(comps2[0]["racedays"]): 
                     if rider[str(i + 1)]:
+                        if i != 0:
+                            cumulativeday[str(i + 1)] = cumulativeday[str(i)] + 0
                         if rider['DNF'] == 2:
                             rider[str(i + 1)] = rider[str(i + 1)] * 2
                             total = total + rider[str(i + 1)]
                             totalday[str(i + 1)] = totalday[str(i + 1)] + rider[str(i + 1)]
+                            cumulativeday[str(i + 1)] = cumulativeday[str(i + 1)] + totalday[str(i + 1)]
+                            cumulativeTemp = cumulativeday[str(i + 1)]
                         else:
                             total = total + rider[str(i + 1)]
                             totalday[str(i + 1)] = totalday[str(i + 1)] + rider[str(i + 1)]                  
+                            cumulativeday[str(i + 1)] = cumulativeday[str(i + 1)] + totalday[str(i + 1)]
+                            cumulativeTemp = cumulativeday[str(i + 1)]
                 if rider['DNF'] == 2:
                     rider["final"] = rider["final"] * 2
                 rider["total"] = total + rider["final"]
                 totalday["final"] = totalday["final"] + rider["final"]
-                totalday["total"] = totalday["total"] + rider["total"] 
+                totalday["total"] = totalday["total"] + rider["total"]
+                cumulativeday["final"] = cumulativeTemp + totalday["final"]
+                cumulativeday["total"] = cumulativeday["final"] 
             # add the totalday values to the rider dict
             riders.append(totalday)
+            riders.append(cumulativeday)
             # populate the table for the team
             teamcomplete = teams(riders)
             # add the name and the table for the team to the userteam dict
