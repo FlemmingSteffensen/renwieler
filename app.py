@@ -453,17 +453,27 @@ def myteam():
                                             WHERE t.user_id = :user_id \
                                             AND c.reg_active = 'on' \
                                         ORDER BY c.startdate DESC", user_id = user_id)
-        canRegisterOrEdit = db.execute("SELECT id FROM competitions WHERE reg_active = 'on' AND strftime('%s', reg_stop) > strftime('%s', 'now') ")
-        riders = db.execute("SELECT r.rider, r.nationality, r.rides_for, tm.team_id, r.price, t.comp_id \
-                                    FROM riders AS r \
-                                    INNER JOIN team_member AS tm ON r.id = tm.rider_id \
-                                    INNER JOIN team AS t ON t.id = tm.team_id \
-                                        WHERE t.user_id = :user_id \
-                                        AND t.comp_id = :activecomps \
-                                    ORDER BY tm.rank ASC" , user_id=user_id, activecomps=activecomps[0]["id"])
+        if activecomps:
+            canRegisterOrEdit = db.execute("SELECT id FROM competitions WHERE reg_active = 'on' AND strftime('%s', reg_stop) > strftime('%s', 'now') ")
+            riders = db.execute("SELECT r.rider, r.nationality, r.rides_for, tm.team_id, r.price, t.comp_id \
+                                        FROM riders AS r \
+                                        INNER JOIN team_member AS tm ON r.id = tm.rider_id \
+                                        INNER JOIN team AS t ON t.id = tm.team_id \
+                                            WHERE t.user_id = :user_id \
+                                            AND t.comp_id = :activecomps \
+                                        ORDER BY tm.rank ASC" , user_id=user_id, activecomps=activecomps[0]["id"])
+            # Direct user to my team page
+            return render_template("myteam.html", activecomps = activecomps, riders=riders, canRegisterOrEdit=canRegisterOrEdit)  
+        else:
+            # Direct user to my team page without a team
+            noteam = 1
+            return render_template("myteam.html", noteam=noteam)
 
-    # Direct user to my team page
-        return render_template("myteam.html", activecomps = activecomps, riders=riders, canRegisterOrEdit=canRegisterOrEdit)  
+
+            
+        
+
+
 
 
 @app.route("/regteam", methods=["GET", "POST"])

@@ -7,53 +7,58 @@
 {% block main %}
     <h1>My Teams</h1>
 
-    <h5>Team in active competition</h5>
+    {% if noteam == 1 %}
+    <h5>You don't have a team in the current competition.</h5>
+    {% else %}
+        <h5>Team in active competition</h5>
 
-    {% if activecomps %}
-        {% for comp in activecomps %}
-        <div class="container">
-            <div class="card mb-3 w-100 mx-auto">
-                <div class="row no-gutters">
-                    <div class="col-md-4">  
-                        {% if comp.racetype_id == 1 %}
-                            <img src="static\tour.jpg" class="card-img-top" alt="Tour de France, Bilde av TravelingTart fra Pexels">
-                        {% elif comp.racetype_id == 2 %}
-                            <img src="static\giro.jpg" class="card-img-top" alt="Giro di Italia, Bilde av TravelingTart fra Pexels">
-                        {% elif comp.racetype_id == 3 %}
-                            <img src="static\vuelta.jpg" class="card-img-top" alt="Vuelta Espana, Bilde av Alex Azabache fra Pexels">            
-                        {% endif %}
-                    </div>              
-                    <div class="col-md-8">
-                        <div class="card-body myteam">
+        {% if activecomps %}
+            {% for comp in activecomps %}
+            <div class="container">
+                <div class="card mb-3 w-100 mx-auto">
+                    <div class="row no-gutters">
+                        <div class="col-md-4">  
                             {% if comp.racetype_id == 1 %}
-                                <h5 class="card-title">Tour de France {{comp.year}}</h5>
+                                <img src="static\tour.jpg" class="card-img-top" alt="Tour de France, Bilde av TravelingTart fra Pexels">
                             {% elif comp.racetype_id == 2 %}
-                                <h5 class="card-title">Giro di Italia {{comp.year}}</h5>
+                                <img src="static\giro.jpg" class="card-img-top" alt="Giro di Italia, Bilde av TravelingTart fra Pexels">
                             {% elif comp.racetype_id == 3 %}
-                                <h5 class="card-title">Vuelta Espana {{comp.year}}</h5>            
+                                <img src="static\vuelta.jpg" class="card-img-top" alt="Vuelta Espana, Bilde av Alex Azabache fra Pexels">            
                             {% endif %}
-                            <p class="card-text">Startdate {{comp.startdate}}</p>
-                            <div>
-                            <h5>My riders</h5>
-                            {% if riders %}
-                            <ol>
-                                {% for rider in riders %}
-                                    {% if rider.comp_id == comp.id %}
-                                    <li><b>{{rider.rider}}</b> <i>{{rider.nationality}}</i> {{rider.rides_for}}</li>
-                                    {% endif %}
-                                {% endfor %}
-                            </ol>
-                            {% endif %}
+                        </div>              
+                        <div class="col-md-8">
+                            <div class="card-body myteam">
+                                {% if comp.racetype_id == 1 %}
+                                    <h5 class="card-title">Tour de France {{comp.year}}</h5>
+                                {% elif comp.racetype_id == 2 %}
+                                    <h5 class="card-title">Giro di Italia {{comp.year}}</h5>
+                                {% elif comp.racetype_id == 3 %}
+                                    <h5 class="card-title">Vuelta Espana {{comp.year}}</h5>            
+                                {% endif %}
+                                <p class="card-text">Startdate {{comp.startdate}}</p>
+                                <div>
+                                <h5>My riders</h5>
+                                {% if riders %}
+                                <ol>
+                                    {% for rider in riders %}
+                                        {% if rider.comp_id == comp.id %}
+                                        <li><b>{{rider.rider}}</b> <i>{{rider.nationality}}</i> {{rider.rides_for}}</li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ol>
+                                {% endif %}
+                                </div>
+                                {% if canRegisterOrEdit %}
+                                <br>
+                                <a href="{{ url_for('editteam') }}" class="btn btn-primary">Edit team</a>
+                                {% endif %}
                             </div>
-                            {% if canRegisterOrEdit %}
-                            <br>
-                            <a href="{{ url_for('editteam') }}" class="btn btn-primary">Edit team</a>
-                            {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        {% endfor %}
+            {% endfor %}
+        {% endif %}
     {% endif %}
+    
 {% endblock %}
