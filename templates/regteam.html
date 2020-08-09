@@ -60,6 +60,7 @@
                                     </ul>
                                     <p>The riders you have currently selected are visible in the same box as well as their ranking</p>
                 {% endif %}
+                <!--  Makes the coin different depending on the price value -->
                 {% if rider.price == 3 %}
                     {% set money.class = "gold" %}
                 {% elif rider.price == 2 %}
@@ -69,6 +70,7 @@
                 {% else %}
                     {% set money.class = "money" %}
                 {% endif %}
+                <!--  Checks if this riders rides for the same team as last rider, if not make a new bootstrap card -->
                 {% if rider.rides_for != ns.last_team %}
                     {% set ns.last_team = rider.rides_for %}
                                 </div>
@@ -111,14 +113,12 @@
                     var form = document.getElementsByTagName("form");
                     var inputs = form[0].getElementsByTagName("input");
                     var chosenRiders = {};
-                    var ranking = [];
 
                     // Get the selected riders (with ranking > 0)
                     for(var i=0; i< inputs.length; i++) {
                         console.log("in");
                         if(inputs[i].value > 0 && inputs[i].name != "comp") {
                             chosenRiders[inputs[i].id] = inputs[i].value;
-                            ranking.push(inputs[i].value);
                         }
                     }
                     // Paste riders to selected riders box
@@ -127,10 +127,12 @@
                         document.getElementById(value).innerHTML = id;
                     }                        
                 }
-
+                // Catches the change in form and calls getSelectedRiders
                 regteam.addEventListener('change', function() {
                     getSelectedRiders();
                 });
+
+                //Sends form to app.py after a couple of checks
                 $("#regteam").on('submit', function(e){
                     e.preventDefault();
                     var riders = [];
@@ -139,12 +141,14 @@
                             riders.push($(this).val());
                         }
                     });
+                        //Checks if you have enough but not too many riders
                         if (riders.length < 9) {
                             alert( "You should select more riders" );
                         }
                         else if (riders.length > 9) {
                             alert("You should select less riders");
                         }
+                        // checks if you use each ranking number onze
                         else {
                             if (checkIfDuplicateExists(riders)) {
                                 alert("Please rank your riders, use each number once")
