@@ -73,6 +73,7 @@ def index():
         #initialize list to hold the standings
         standingslist=[]
         chartTotals=[]
+        chartCumulatives=[]
         # instantiate tabel per team
         for team in teamusers:
             # initialize a dict to hold all the information for the team
@@ -127,7 +128,9 @@ def index():
                 for i in range(comps2[0]["racedays"]): 
                     if rider[str(i + 1)]:
                         if i != 0:
-                            cumulativeday[str(i + 1)] = cumulativeday[str(i)] + 0
+                            cumulativeday[str(i + 1)] = cumulativeday[str(i)]
+                        else:
+                            cumulativeday["1"] = 0
                         if rider['DNF'] == 2:
                             rider[str(i + 1)] = rider[str(i + 1)] * 2
                             total = total + rider[str(i + 1)]
@@ -139,6 +142,12 @@ def index():
                             totalday[str(i + 1)] = totalday[str(i + 1)] + rider[str(i + 1)]                  
                             cumulativeday[str(i + 1)] = cumulativeday[str(i + 1)] + totalday[str(i + 1)]
                             cumulativeTemp = cumulativeday[str(i + 1)]
+                    else:
+                        if i != 0:
+                            cumulativeday[str(i + 1)] = cumulativeday[str(i)] + totalday[str(i + 1)]
+                        else:
+                            cumulativeday["1"] = totalday["1"]
+                        cumulativeTemp = cumulativeday[str(i + 1)]
                 if rider['DNF'] == 2:
                     rider["final"] = rider["final"] * 2
                 rider["total"] = total + rider["final"]
@@ -165,6 +174,10 @@ def index():
             totals['user'] = team['username']
             totals['points'] = totalday
             chartTotals.append(totals)
+            cumulatives = {}
+            cumulatives['user'] = team['username']
+            cumulatives['points'] = cumulativeday
+            chartCumulatives.append(cumulatives)
         # sort the standingslist and add the rank to each dict
         standingslist = sorted(standingslist, key = lambda item: item['points'], reverse=True)
         # iterate over the dicts in standingslist to add the rank
@@ -176,7 +189,7 @@ def index():
         standingscomplete = Standings(standingslist)
         
         # render the page passing the competition and teams to the page
-        return render_template("index.html", role=role, comps2=comps2, allteams=allteams, standings=standingscomplete, chartTotals=chartTotals)
+        return render_template("index.html", role=role, comps2=comps2, allteams=allteams, standings=standingscomplete, chartTotals=chartTotals, chartCumulatives=chartCumulatives)
     else:
         # render the page passing only the role to the page
         return render_template("index.html", role=role)

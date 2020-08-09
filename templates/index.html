@@ -65,7 +65,8 @@
                 <div class="col-sm-4">
                     <div><h2 class="">Leaderboard</h2></div>
                     {{ standings }}
-                    <canvas id="chartTotal" width="800" height="800"></canvas> 
+                    <canvas id="chartTotal" width="800" height="800"></canvas>
+                    <canvas id="chartCumulative" width="800" height="800"></canvas> 
                 </div>
             </div>
         {% endfor %}        
@@ -108,7 +109,6 @@
             stages.push("final");
 
             var datasetdata = []
-            var datasetdata2 = []
 
             var colors = [ '#2685CB', '#365513', '#FEC81B', '#FD8D14', '#CE00E6', '#4B4AD3', '#FC3026', '#B8CCE3', '#6ADC88', '#FEE45F', '#78a303', '#6303a3', '#a3a003' ];
 
@@ -126,11 +126,71 @@
                 }
             }
 
-            var pointsPerDay = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: stages,
-                datasets: datasetdata
+            var pointsTotal = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: stages,
+                    datasets: datasetdata
+                    },
+                options: {
+                    title: {
+                        display: true,
+                        text: 'Points per day'
+                    }
+                }
+            })
+        {% endif %}
+        {% if chartCumulatives %}
+            var ctx2 = document.getElementById('chartCumulative');
+
+            var teams2 = {{ chartCumulatives|tojson }};
+            var teamNames2 = [];
+            var pointsPerTeam2 = [];
+            for (i in teams2) {           
+                teamNames2.push(teams2[i].user);
+                pointsDay2 = []
+                for (j = 0; j < {{ comps2[0]["racedays"]}}; j++) {
+                    pointsDay2.push(teams2[i].points[j+1]);
+                }
+                pointsDay2.push(teams2[i].points["final"]);
+                pointsPerTeam2.push(pointsDay2)
+            }
+            
+            var stages2 = [];
+            for (i = 0; i < {{ comps2[0]["racedays"]}}; i++) {
+                stages2.push(i);
+            }
+            stages2.push("final");
+
+            var datasetdata2 = []
+
+            var colors2 = [ '#2685CB', '#365513', '#FEC81B', '#FD8D14', '#CE00E6', '#4B4AD3', '#FC3026', '#B8CCE3', '#6ADC88', '#FEE45F', '#78a303', '#6303a3', '#a3a003' ];
+
+            for (var i=0; i < teamNames2.length; i++) {
+                datasetdata2[i] = {
+                    label: teamNames2[i],
+                    data: pointsPerTeam2[i],
+                    backgroundColor: colors2[i],
+                    borderColor: colors2[i],
+                    hoverBackgroundColor: colors2[i],
+                    borderStyle: 'solid',
+                    borderWidth: 2,
+                    fill: false,
+                    lineTension: 0,
+                }
+            }
+
+            var pointsCumulative = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: stages2,
+                    datasets: datasetdata2
+                    },
+                options: {
+                    title: {
+                        display: true,
+                        text: 'Cumulative scores per day'
+                    }
                 }
             })
         {% endif %}
