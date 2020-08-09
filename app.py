@@ -72,6 +72,7 @@ def index():
         allteams=[]
         #initialize list to hold the standings
         standingslist=[]
+        chartTotals=[]
         # instantiate tabel per team
         for team in teamusers:
             # initialize a dict to hold all the information for the team
@@ -149,6 +150,10 @@ def index():
             standingsteam['points'] = totalday['total']
             # add the standing of the team to the list of standings
             standingslist.append(standingsteam)
+            totals = {}
+            totals['user'] = team['username']
+            totals['points'] = totalday
+            chartTotals.append(totals)
         # sort the standingslist and add the rank to each dict
         standingslist = sorted(standingslist, key = lambda item: item['points'], reverse=True)
         # iterate over the dicts in standingslist to add the rank
@@ -160,7 +165,7 @@ def index():
         standingscomplete = Standings(standingslist)
         
         # render the page passing the competition and teams to the page
-        return render_template("index.html", role=role, comps2=comps2, allteams=allteams, standings=standingscomplete)
+        return render_template("index.html", role=role, comps2=comps2, allteams=allteams, standings=standingscomplete, chartTotals=chartTotals)
     else:
         # render the page passing only the role to the page
         return render_template("index.html", role=role)
