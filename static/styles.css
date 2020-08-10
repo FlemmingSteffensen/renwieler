@@ -91,10 +91,6 @@ input[type="number"].points, textarea {
     text-align: left;
 }
 
-.total {
-    border-left: 2px double rgb(0, 0, 0);
-}
-
 .DNF tbody > *:nth-child(10) {
     border-top: 2px double rgb(0, 0, 0);
 }
@@ -119,6 +115,10 @@ input[type="number"].points, textarea {
 .day {
     border-left: 1px solid #dee2e6;
     border-right: 1px solid #dee2e6;
+}
+
+.total {
+    border-left: 2px double rgb(0, 0, 0);
 }
 
 .pname {

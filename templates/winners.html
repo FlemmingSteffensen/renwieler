@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Winners
+{% endblock %}
+
+{% block adminNav %}
+    {% if role == 2 %}
+        <li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
+    {% endif %}
+{% endblock %}
+
+{% block main %}
+    {% for comp in comps %}
+        <div>
+            {% if comp.racetype_id == 1 %}
+                <h1 class="">Tour de France {{comp.year}}</h1>
+            {% elif comp.racetype_id == 2 %}
+                <h1 class="">Giro di Italia {{comp.year}}</h1>
+            {% elif comp.racetype_id == 3 %}
+                <h1 class="">Vuelta Espana {{comp.year}}</h1>
+            {% else %}
+                <h1 class="">Unknown competition</h1>            
+            {% endif %}
+        </div>
+        <div>
+            <h5>Current registered winners</h5>
+            {{ winners }}
+            <form id="calcWin" action="/calcWin" method="POST">
+                <input type="hidden" name="compid" value="{{ comp.id }}">
+                <button class="btn btn-primary" type="submit">Calculate winners</button>
+            </form>
+            <form id="delWin" action="/delWin" method="POST">
+                <input type="hidden" name="compid" value="{{ comp.id }}">
+                <button class="btn btn-primary" type="submit">Delete current winners</button>
+            </form>
+        </div>
+    {% endfor %}
+{% endblock %}
