@@ -35,10 +35,24 @@
                                     {% elif comp.racetype_id == 3 %}
                                         <h5 class="card-title">Vuelta Espana {{comp.year}}</h5>            
                                     {% endif %}
-                                    <p class="card-text">Show the archived data for this competition</p>
+                                    {% for winner in winners %}
+                                        {% if winner.comp_id == comp.id %}
+                                            <div>
+                                            <br>
+                                            <br>
+                                                <h4>
+                                                <img src="static/award.svg" alt="Winner!" width="50" height="50" style="vertical-align:middle">
+                                                {{ winner.username }}</h4>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <br>
+                                    
+                                    <p class="card-text"></p>
                                     <div class="btn-group-vertical">
                                         <a href="{{ url_for('archive', activecomp=comp.id) }}" class="btn btn-primary" style="margin: 0.1em;">View</a>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
