@@ -248,12 +248,6 @@ def myteam():
             return render_template("myteam.html", noteam=noteam)
 
 
-            
-        
-
-
-
-
 @app.route("/regteam", methods=["GET", "POST"])
 @login_required
 def regteam():
@@ -265,8 +259,13 @@ def regteam():
         # Get the total price for buying riders
         price_total = db.execute("SELECT total_price FROM competitions WHERE id = :compid", compid=compid)
         total_price = price_total[0]["total_price"]
+        # Gather the prices of all riders
+        rider_price = {}
+        for rider in riders:
+            rider_price[rider["rider"]] = rider["price"]
+        jsonify(rider_price)
         # Direct user to register team page
-        return render_template("regteam.html", riders=riders, total_price=total_price)
+        return render_template("regteam.html", riders=riders, total_price=total_price, rider_price=rider_price)
 
     if request.method == "POST":
         user = session.get("user_id")

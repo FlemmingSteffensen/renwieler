@@ -21,8 +21,8 @@
                             <div class="card-header">
                                 <h2 class="card-title">Selected team</h2>
                             </div>
-                            <p class="card-text">Total money: {{total_price}}</p>
-                            <p class="card-text">Money left: </p>
+                            <p class="card-text" id="total_money">Total money: {{total_price}}</p>
+                            <p class="card-text" id="money_spend">Money spend: </p>
                             <h4 class="card-text">Your riders: </h4>
                             <ol class="myteam">
                                 <li id="1"></li>
@@ -108,30 +108,32 @@
                 function checkIfDuplicateExists(w){
                     return new Set(w).size !== w.length 
                 }
+
                 //When change in form, function to get the currently selected riders
                 function getSelectedRiders() {
-                    var form = document.getElementsByTagName("form");
-                    var inputs = form[0].getElementsByTagName("input");
-                    var chosenRiders = {};
+                    let form = document.getElementsByTagName("form");
+                    let inputs = form[0].getElementsByTagName("input");
+                    let chosenRiders = {};
 
                     // Remove previous riders selected riders box 
-                    for(var i = 1; i < 10; i++) {
+                    for(let i = 1; i < 10; i++) {
                         document.getElementById(i).innerHTML = "";
                     }
 
                     // Get the selected riders (with ranking > 0)
-                    for(var i = 0; i < inputs.length; i++) {
-                        console.log("in");
+                    for(let i = 0; i < inputs.length; i++) {
                         if(inputs[i].value > 0 && inputs[i].name != "comp") {
                             chosenRiders[inputs[i].id] = inputs[i].value;
                         }
                     }
                     // Paste riders to selected riders box
                     let entries = Object.entries(chosenRiders);
-                    var usedRanking = "";
-                    var rankingPlus = "";
+                    let usedRanking = "";
+                    let rankingPlus = "";
+                    let currentSelection = [];
                     for(const[id,value] of entries) {
                         usedRanking = document.getElementById(value).innerHTML;
+                        currentSelection.push(id);
 
                         // If ranking number is already used, show both (or more) selected riders
                         if(usedRanking.length != 0) {
@@ -145,28 +147,55 @@
                             document.getElementById(value).innerHTML = id;
                         }
                         
-                    }                        
+                    }
+                    return currentSelection;                        
+                }
+
+                // Get the rider costs and calculate remaining money
+                function getPrices(currentRiders) {
+                    let prices = {{ rider_price|safe }};
+                    let prices_entries = Object.entries(prices);
+                    let money_used = 0;
+                    for(const[rider,price] of prices_entries) {
+                        for(let i = 0; i < currentRiders.length; i++) {
+                            if(currentRiders[i] == rider) {
+                                money_used += price;
+                            }
+                        }
+                    }
+                    document.getElementById("money_spend").innerHTML = "Money spend: " + money_used.toString();
+                    return money_used;
                 }
                 // Catches the change in form and calls getSelectedRiders
                 regteam.addEventListener('change', function() {
-                    getSelectedRiders();
+                    let currentRiders = getSelectedRiders();
+                    getPrices(currentRiders);
                 });
 
                 //Sends form to app.py after a couple of checks
                 $("#regteam").on('submit', function(e){
                     e.preventDefault();
-                    var riders = [];
+                    let riders = [];
                     $.each($("input[type='number']"), function(){
                         if ($(this).val() > 0) {
                             riders.push($(this).val());
                         }
                     });
+                        // Initialize for money check
+                        let money_used = getPrices(getSelectedRiders());
+                        let total_money = document.getElementById("total_money").innerHTML;
+                        total_money = total_money.replace( /[^\d.]/g, '' );
+                        total_money = total_money - money_used;
                         //Checks if you have enough but not too many riders
                         if (riders.length < 9) {
                             alert( "You should select more riders" );
                         }
                         else if (riders.length > 9) {
                             alert("You should select less riders");
+                        }
+                        // Checks if you spend too much money
+                        else if (total_money < 0) {
+                            alert("You spend too much money!");
                         }
                         // checks if you use each ranking number onze
                         else {
