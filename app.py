@@ -202,8 +202,10 @@ def history():
     role = getRole()
     # Get all competitions and sort by startdate
     comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop FROM competitions ORDER BY startdate DESC")
+    winners = db.execute("SELECT m.comp_id, u.username FROM medals m INNER JOIN team t ON m.team_id = t.id INNER JOIN users u ON t.user_id = u.id WHERE m.medal=1")
+    print(winners)
     # Direct user to history page
-    return render_template("history.html", role=role, comps=comps)  
+    return render_template("history.html", role=role, comps=comps, winners=winners)  
 
 @app.route("/archive")
 @login_required
@@ -485,15 +487,17 @@ def winners():
 def calcWin():
     """insert the medaling teams in the medals table"""
     compid = request.form.get("compid")
-    comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop, racedays, reg_active FROM competitions WHERE id = :compid", compid=compid)
-    standingslist = getResults(comps)[4]
-    print(standingslist)
-    team1 = db.execute("SELECT t.id FROM team t INNER JOIN users u ON t.user_id = u.id WHERE u.username = :username AND t.comp_id = :compid", username=standingslist[0]["user"], compid=compid) 
-    db.execute("INSERT INTO medals (team_id, medal) VALUES (:team, :medal)", team=team1[0]["id"], medal=1)
-    team2 = db.execute("SELECT t.id FROM team t INNER JOIN users u ON t.user_id = u.id WHERE u.username = :username AND t.comp_id = :compid", username=standingslist[1]["user"], compid=compid) 
-    db.execute("INSERT INTO medals (team_id, medal) VALUES (:team, :medal)", team=team2[0]["id"], medal=2)
-    team3 = db.execute("SELECT t.id FROM team t INNER JOIN users u ON t.user_id = u.id WHERE u.username = :username AND t.comp_id = :compid", username=standingslist[2]["user"], compid=compid) 
-    db.execute("INSERT INTO medals (team_id, medal) VALUES (:team, :medal)", team=team3[0]["id"], medal=3)    
+    medals = db.execute("SELECT id FROM medals WHERE comp_id = :compid", compid=compid)
+    if not medals:
+        comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop, racedays, reg_active FROM competitions WHERE id = :compid", compid=compid)
+        standingslist = getResults(comps)[4]
+        print(standingslist)
+        team1 = db.execute("SELECT t.id FROM team t INNER JOIN users u ON t.user_id = u.id WHERE u.username = :username AND t.comp_id = :compid", username=standingslist[0]["user"], compid=compid) 
+        db.execute("INSERT INTO medals (team_id, medal, comp_id) VALUES (:team, :medal, :compid)", team=team1[0]["id"], medal=1, compid=compid)
+        team2 = db.execute("SELECT t.id FROM team t INNER JOIN users u ON t.user_id = u.id WHERE u.username = :username AND t.comp_id = :compid", username=standingslist[1]["user"], compid=compid) 
+        db.execute("INSERT INTO medals (team_id, medal, comp_id) VALUES (:team, :medal, :compid)", team=team2[0]["id"], medal=2, compid=compid)
+        team3 = db.execute("SELECT t.id FROM team t INNER JOIN users u ON t.user_id = u.id WHERE u.username = :username AND t.comp_id = :compid", username=standingslist[2]["user"], compid=compid) 
+        db.execute("INSERT INTO medals (team_id, medal, comp_id) VALUES (:team, :medal, :compid)", team=team3[0]["id"], medal=3, compid=compid)    
     return redirect(url_for('winners', activecomp=compid))
 
 @app.route("/delWin", methods=["POST"])
@@ -502,8 +506,7 @@ def calcWin():
 def delWin():
     """delete the medaling teams form the medal tabel"""
     compid = request.form.get("compid")
-    teams = db.execute("SELECT t.id FROM team t INNER JOIN medals m ON t.id = m.team_id WHERE t.comp_id = :compid", compid=compid)
-    db.execute("DELETE FROM medals WHERE team_id = :team1 OR team_id = :team2 OR team_id = :team3", team1=teams[0]["id"], team2=teams[1]["id"], team3=teams[2]["id"])
+    db.execute("DELETE FROM medals WHERE comp_id = :compid", compid=compid)
     # reload new user screen
     return redirect(url_for('winners', activecomp=compid))
 
