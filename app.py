@@ -186,14 +186,6 @@ def chngpw():
         # Redirect user to home page
         return redirect("/")
 
-@app.route("/frgtpw")
-@login_required
-def frgtpw():
-    """Changes password for the user"""
-    #TODO
-    # Redirect user to login form
-    return redirect("/")
-
 @app.route("/rules")
 @login_required
 def rules():
@@ -357,14 +349,6 @@ def editteam():
                             db.execute("UPDATE team_member SET rider_id = :rider_id WHERE team_id = :team_id AND rank = :rank", rider_id=k, team_id=team_id, rank=f)
             return redirect("/myteam")
 
-@app.route("/oskar")
-@login_required
-def oskar():
-    """Show blog posts by Oskar"""
-    #TODO
-    # Redirect user to login form
-    return render_template("oskar.html")  
-
 @app.route("/admin")
 @login_required
 def admin():
@@ -448,7 +432,7 @@ def uploadRiders():
         file_t = str_file_value.splitlines()
         csv_reader = csv.reader(file_t, delimiter=',')
         for row in csv_reader:
-            rowRider = db.execute("SELECT id FROM riders WHERE rider = :rider", rider=row[0])
+            rowRider = db.execute("SELECT id FROM riders WHERE rider = :rider AND comp_id = :compid", rider=row[0], compid=compid)
             if rowRider:
                 db.execute("UPDATE riders SET rider = :rider, nationality = :nationality, rides_for = :rides_for WHERE id = :id", rider=row[0], nationality=row[1], rides_for=row[2], id=rowRider[0]["id"])
             else:
@@ -578,15 +562,6 @@ def DNF():
         # render the page passing the information to the page
         return render_template("DNF.html", role=role, riders=riders, compid=compid, comps=comps)  
 
-
-@app.route("/editBlog")
-#TODO @admin_required
-@login_required
-def editBlog():
-    """Show page to edit and add blog posts"""
-    #TODO
-    # Redirect user to login form
-    return render_template("editblog.html")
 
 @app.route("/editUser", methods=["GET", "POST"])
 @login_required
