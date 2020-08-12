@@ -66,6 +66,18 @@ main img
     text-align: left;
 }
 
+.rules {
+    text-align: middle;
+    margin: auto;
+    width: 80%;
+}
+
+.rules_table {
+    margin: auto;
+    width: 400px;
+    border: 0.5px solid grey;
+}
+
 td {
     position: relative;
 }

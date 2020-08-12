@@ -194,6 +194,13 @@ def frgtpw():
     # Redirect user to login form
     return redirect("/")
 
+@app.route("/rules")
+@login_required
+def rules():
+    """Show rules of the current race (hard coded for now)"""
+    # Direct user to rules page
+    return render_template("rules.html") 
+
 
 @app.route("/history")
 @login_required
