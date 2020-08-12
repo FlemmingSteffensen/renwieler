@@ -314,8 +314,13 @@ def editteam():
                                     FROM riders \
                                     WHERE comp_id = :activecomp \
                                     Order by rides_for ASC, rider ASC", activecomp=activecomp)
+        # Gather the prices of all riders
+        rider_price = {}
+        for rider in allRiders:
+            rider_price[rider["rider"]] = rider["price"]
+        jsonify(rider_price)
         # Send team riders and competition riders to the html template
-        return render_template("editteam.html", teamRiders=teamRiders, allRiders = allRiders, activecomp=activecomp, team_id=team_id, total_price=total_price)
+        return render_template("editteam.html", teamRiders=teamRiders, allRiders = allRiders, activecomp=activecomp, team_id=team_id, total_price=total_price, rider_price=rider_price)
     """Edit/update the current team"""
     if request.method == "POST":
         #user = session.get("user_id")
