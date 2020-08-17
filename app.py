@@ -200,7 +200,7 @@ def history():
     """Show results from past competitons"""
     role = getRole()
     # Get all competitions and sort by startdate
-    comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop FROM competitions ORDER BY startdate DESC")
+    comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop FROM competitions WHERE reg_active = 'off' ORDER BY startdate DESC")
     winners = db.execute("SELECT m.comp_id, u.username FROM medals m INNER JOIN team t ON m.team_id = t.id INNER JOIN users u ON t.user_id = u.id WHERE m.medal=1")
     print(winners)
     # Direct user to history page

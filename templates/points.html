@@ -51,7 +51,11 @@
                                     <td><input class="points" type="number" name="{{rider.id}} {{number+1}}" value="0"></td>
                                 {% endif %}
                             {% endfor %}
-                            <td><input class="points" type="number" name="{{rider.id}}final" value="{{rider.final}}"></td>
+                            {% if rider["final"] %}
+                                <td><input class="points" type="number" name="{{rider.id}}final" value="{{rider.final}}"></td>
+                            {% else %}
+                                <td><input class="points" type="number" name="{{rider.id}}final" value="0"></td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                 </tbody>
