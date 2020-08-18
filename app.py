@@ -26,7 +26,7 @@ def after_request(response):
     return response
 
 # Configure session to use filesystem (instead of signed cookies)
-app.config["SESSION_FILE_DIR"] = mkdtemp()
+#app.config["SESSION_FILE_DIR"] = mkdtemp()
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
@@ -397,7 +397,7 @@ def editComp():
         role = getRole()
         compid = request.args.get('activecomp', None)
         comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop, racedays, reg_active, total_price FROM competitions WHERE id = :compid", compid=compid)
-        return render_template("editcomp.html", comps=comps, role=role)
+        return render_template("editComp.html", comps=comps, role=role)
     """register a new competition in the database"""
     if request.method == "POST":
         #Get the role of the user from de DB
@@ -662,3 +662,6 @@ def errorhandler(e):
 # Listen for errors
 for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0')
