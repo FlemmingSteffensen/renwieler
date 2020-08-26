@@ -56,12 +56,12 @@
                                         <li style="color:black">Free: <b class="money"> 0 </b></li>
                                         <li style="color:black">Bronze: <b class="bronze"> 1 </b></li>
                                         <li style="color:black">Silver: <b class="silver"> 2 </b></li>
-                                        <li style="color:black">Gold: <b class="gold"> 3 </b></li>
+                                        <li style="color:black">Gold: <b class="gold"> 4 </b></li>
                                     </ul>
                                     <p>The riders you have currently selected are visible in the same box as well as their ranking</p>
                 {% endif %}
                 <!--  Makes the coin different depending on the price value -->
-                {% if rider.price == 3 %}
+                {% if rider.price == 4 %}
                     {% set money.class = "gold" %}
                 {% elif rider.price == 2 %}
                     {% set money.class = "silver" %}
