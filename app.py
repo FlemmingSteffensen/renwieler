@@ -206,6 +206,7 @@ def history():
     # Direct user to history page
     return render_template("history.html", role=role, comps=comps, winners=winners)  
 
+
 @app.route("/archive")
 @login_required
 def archive():
@@ -216,7 +217,6 @@ def archive():
     allteams, standingscomplete, chartTotals, chartCumulatives = getResults(comps2)[0:4]      
     # render the page passing the competition and teams to the page
     return render_template("archive.html", role=role, comps2=comps2, allteams=allteams, standings=standingscomplete, chartTotals=chartTotals, chartCumulatives=chartCumulatives)
-
 
 
 @app.route("/myteam", methods=["GET", "POST"])
@@ -249,48 +249,6 @@ def myteam():
             return render_template("myteam.html", noteam=noteam)
 
 
-@app.route("/regteam", methods=["GET", "POST"])
-@login_required
-def regteam():
-    """Show the register team page of the current race"""
-    if request.method == "GET":
-        compid = request.args.get('activecomp', None)
-        # Get all the riders of the competition
-        riders = db.execute("SELECT id, comp_id, rider, nationality, rides_for, price FROM riders WHERE comp_id = :compid Order by rides_for ASC, rider ASC", compid=compid)
-        # Get the total price for buying riders
-        price_total = db.execute("SELECT total_price FROM competitions WHERE id = :compid", compid=compid)
-        total_price = price_total[0]["total_price"]
-        # Gather the prices of all riders
-        rider_price = {}
-        for rider in riders:
-            rider_price[rider["rider"]] = rider["price"]
-        jsonify(rider_price)
-        # Direct user to register team page
-        return render_template("regteam.html", riders=riders, total_price=total_price, rider_price=rider_price)
-
-    if request.method == "POST":
-        user = session.get("user_id")
-        compid = request.form.get("comp")
-        team = db.execute("SELECT id FROM team WHERE user_id = :user AND comp_id = :compid", user=user, compid=compid)
-        # Ensure that a competition is selected
-        if not compid:
-            return apology("Please select a competition before registering a team", 400)
-        # Ensure that users doesn't already have a team
-        elif team:
-            return apology("You already have a team", 400)
-        else:
-            # insert competion in competition table
-            db.execute("INSERT INTO team (user_id, comp_id) VALUES (:user, :compid)", user=user, compid=compid)
-            teamid = db.execute("SELECT id FROM team WHERE user_id = :user AND comp_id = :compid", user=user, compid=compid)
-            team_id = teamid[0]["id"]
-            for k,v in request.form.items():
-                if k.isdigit():
-                    if v.isdigit():
-                        f = int(v)
-                        if f > 0: 
-                            db.execute("INSERT INTO team_member (team_id, rider_id, rank) VALUES (:team_id, :rider_id, :rank)", team_id=team_id, rider_id=k, rank=f)
-            return redirect("/myteam")
-
 @app.route("/editteam", methods=["GET", "POST"])
 @login_required
 def editteam():
@@ -305,49 +263,67 @@ def editteam():
                                         INNER JOIN team AS t ON c.id = t.comp_id \
                                             WHERE t.user_id = :user_id \
                                             AND c.reg_active = 'on'", user_id = user_id)
-        activecomp = editTeamID[0]["id"]
-        total_price = editTeamID[0]["total_price"]
-        team_id = editTeamID[0]["team_id"]
+        if editTeamID:
+            team_id = editTeamID[0]["team_id"]        
+        else:
+            team_id = None
+        # Get the ID and total price for active competition
+        activecomp = db.execute("SELECT ID, total_price FROM competitions WHERE reg_active = 'on'")
+        activecomp_ID = activecomp[0]["id"]
+        total_price = activecomp[0]["total_price"]
+        # Get all the riders of the competition
+        allRiders = db.execute("Select id, comp_id, rider, nationality, rides_for, price, comp_id \
+                                    FROM riders \
+                                    WHERE comp_id = :activecomp_ID \
+                                    Order by rides_for ASC, rider ASC", activecomp_ID=activecomp_ID)
         # Get the riders with info of the users team
         teamRiders = db.execute("SELECT r.rider, r.nationality, r.rides_for, tm.rank, tm.team_id, t.comp_id \
                                     FROM riders AS r \
                                     INNER JOIN team_member AS tm ON r.id = tm.rider_id \
                                     INNER JOIN team AS t ON t.id = tm.team_id \
                                         WHERE t.user_id = :user_id \
-                                        AND t.comp_id = :activecomp \
-                                    ORDER BY tm.rank ASC" , user_id=user_id, activecomp=activecomp)
-        # Get all the riders of the competition
-        allRiders = db.execute("Select id, comp_id, rider, nationality, rides_for, price, comp_id \
-                                    FROM riders \
-                                    WHERE comp_id = :activecomp \
-                                    Order by rides_for ASC, rider ASC", activecomp=activecomp)
+                                        AND t.comp_id = :activecomp_ID \
+                                    ORDER BY tm.rank ASC" , user_id=user_id, activecomp_ID=activecomp_ID)
         # Gather the prices of all riders
         rider_price = {}
         for rider in allRiders:
             rider_price[rider["rider"]] = rider["price"]
         jsonify(rider_price)
         # Send team riders and competition riders to the html template
-        return render_template("editteam.html", teamRiders=teamRiders, allRiders = allRiders, activecomp=activecomp, team_id=team_id, total_price=total_price, rider_price=rider_price)
-    """Edit/update the current team"""
+        return render_template("editteam.html", teamRiders=teamRiders, allRiders = allRiders, activecomp_ID=activecomp_ID, team_id=team_id, total_price=total_price, rider_price=rider_price)
+    """Edit/update/insert the current team"""
     if request.method == "POST":
-        #user = session.get("user_id")
+        user = session.get("user_id")
         compid = request.form.get("comp")
         team_id = request.form.get("team_id")
-        # Ensure that a competition is selected
-        if not compid:
-            return apology("Please select a competition before registering a team", 400)
-        # Ensure that users doesn't already have a team
-        elif not team_id:
-            return apology("Please create a team before editing", 400)
+        # Update the current team
+        if team_id.isnumeric():
+            # Ensure that a competition is selected
+            if not compid:
+                return apology("Please select a competition before registering a team", 400)
+            else:
+                # update riders in team
+                for k,v in request.form.items():
+                    if k.isdigit():
+                        if v.isdigit():
+                            f = int(v)
+                            if f > 0: 
+                                db.execute("UPDATE team_member SET rider_id = :rider_id WHERE team_id = :team_id AND rank = :rank", rider_id=k, team_id=team_id, rank=f)
+                return redirect("/myteam")
+        # Insert a new team
         else:
-            # update riders in team
+            # insert competion in competition table
+            db.execute("INSERT INTO team (user_id, comp_id) VALUES (:user, :compid)", user=user, compid=compid)
+            teamid = db.execute("SELECT id FROM team WHERE user_id = :user AND comp_id = :compid", user=user, compid=compid)
+            team_id = teamid[0]["id"]
             for k,v in request.form.items():
                 if k.isdigit():
                     if v.isdigit():
                         f = int(v)
                         if f > 0: 
-                            db.execute("UPDATE team_member SET rider_id = :rider_id WHERE team_id = :team_id AND rank = :rank", rider_id=k, team_id=team_id, rank=f)
+                            db.execute("INSERT INTO team_member (team_id, rider_id, rank) VALUES (:team_id, :rider_id, :rank)", team_id=team_id, rider_id=k, rank=f)
             return redirect("/myteam")
+
 
 @app.route("/admin")
 @login_required
