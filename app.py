@@ -54,8 +54,20 @@ def index():
         # render the page passing the competition and teams to the page
         return render_template("index.html", role=role, comps2=comps2, allteams=allteams, standings=standingscomplete, chartTotals=chartTotals, chartCumulatives=chartCumulatives)
     else:
-        # render the page passing only the role to the page
-        return render_template("index.html", role=role)
+        winTDF = db.execute("SELECT c.year, u.username FROM users u INNER JOIN team t ON u.id = t.user_id INNER JOIN medals m ON t.id = m.team_id INNER JOIN competitions c ON c.id = m.comp_id WHERE m.medal = 1 AND c.racetype_id = 1 ORDER BY c.year")
+        winGDI = db.execute("SELECT c.year, u.username FROM users u INNER JOIN team t ON u.id = t.user_id INNER JOIN medals m ON t.id = m.team_id INNER JOIN competitions c ON c.id = m.comp_id WHERE m.medal = 1 AND c.racetype_id = 2 ORDER BY c.year")
+        winVE = db.execute("SELECT c.year, u.username FROM users u INNER JOIN team t ON u.id = t.user_id INNER JOIN medals m ON t.id = m.team_id INNER JOIN competitions c ON c.id = m.comp_id WHERE m.medal = 1 AND c.racetype_id = 3 ORDER BY c.year")
+
+        class Winners(Table):
+            year = Col('Year', column_html_attrs={'class': 'year'})
+            username = Col('Winner', column_html_attrs={'class': 'winner'})
+            classes = ['winner', 'table', 'table-lg']   
+
+        winnersTDF = Winners(winTDF)
+        winnersGDI = Winners(winGDI)
+        winnersVE = Winners(winVE)
+        # render the page passing the winners of previous competitions
+        return render_template("index.html", role=role, winnersTDF=winnersTDF, winnersGDI=winnersGDI, winnersVE=winnersVE)
 
 @app.route("/check", methods=["GET"])
 def check():

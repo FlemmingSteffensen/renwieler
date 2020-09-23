@@ -30,7 +30,7 @@
                                 {% if comp.racetype_id == 1 %}
                                     <h5 class="card-title">Tour de France {{comp.year}}</h5>
                                 {% elif comp.racetype_id == 2 %}
-                                    <h5 class="card-title">Giro di Italia {{comp.year}}</h5>
+                                    <h5 class="card-title">Giro d'Italia {{comp.year}}</h5>
                                 {% elif comp.racetype_id == 3 %}
                                     <h5 class="card-title">Vuelta Espana {{comp.year}}</h5>            
                                 {% endif %}
@@ -48,7 +48,7 @@
                 {% if comp.racetype_id == 1 %}
                     <h1 class="">Tour de France {{comp.year}}</h1>
                 {% elif comp.racetype_id == 2 %}
-                    <h1 class="">Giro di Italia {{comp.year}}</h1>
+                    <h1 class="">Giro d'Italia {{comp.year}}</h1>
                 {% elif comp.racetype_id == 3 %}
                     <h1 class="">Vuelta Espana {{comp.year}}</h1>
                 {% else %}
@@ -56,23 +56,38 @@
                 {% endif %}
             </div>
             <div class="row">
-                <div class="col-sm-8">
-                    {% for team in allteams %} 
-                        <div><h2 class="username">{{ team.username }}</h2></div>
-                        {{ team.table }}  
-                    {% endfor %} 
-                </div>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <div><h2 class="">Leaderboard</h2></div>
                     {{ standings }}
-                    <canvas id="chartTotal" width="800" height="800"></canvas>
-                    <canvas id="chartCumulative" width="800" height="800"></canvas> 
+                </div>            
+                <div class="col-sm-9">
+                    <canvas id="chartTotal" width="" height="100"></canvas>
+                    <canvas id="chartCumulative" width="" height="100"></canvas> 
                 </div>
+            </div>
+            <div class="row">
+                {% for team in allteams %} 
+                    <div><h2 class="username">{{ team.username }}</h2></div>
+                    {{ team.table }}  
+                {% endfor %} 
             </div>
         {% endfor %}        
     {% else %}
             <div>
-                No current competitions
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div><h2 class="">Tour de France</h2></div>
+                        {{ winnersTDF }}
+                    </div>
+                    <div class="col-sm-4">
+                        <div><h2 class="">Giro d'Italia</h2></div>
+                        {{ winnersGDI }}
+                    </div>
+                    <div class="col-sm-4">
+                        <div><h2 class="">Vuelta Espana</h2></div>
+                        {{ winnersVE }}
+                    </div>
+                </div>
             </div>
     {% endif %}
     <script>

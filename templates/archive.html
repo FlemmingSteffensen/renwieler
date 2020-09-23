@@ -25,19 +25,21 @@
                 {% endif %}
             </div>
             <div class="row">
-                <div class="col-sm-8">
-                    {% for team in allteams %} 
-                        <div><h2 class="username">{{ team.username }}</h2></div>
-                        {{ team.table }}  
-                    {% endfor %} 
-                </div>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <div><h2 class="">Leaderboard</h2></div>
                     {{ standings }}
-                    <canvas id="chartTotal" width="800" height="800"></canvas>
-                    <canvas id="chartCumulative" width="800" height="800"></canvas> 
+                </div>            
+                <div class="col-sm-9">
+                    <canvas id="chartTotal" width="" height="100"></canvas>
+                    <canvas id="chartCumulative" width="" height="100"></canvas> 
                 </div>
             </div>
+            <div class="row">
+                {% for team in allteams %} 
+                    <div><h2 class="username">{{ team.username }}</h2></div>
+                    {{ team.table }}  
+                {% endfor %} 
+            </div> 
         {% endfor %}        
     {% else %}
             <div>
