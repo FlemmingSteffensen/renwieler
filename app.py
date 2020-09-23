@@ -340,6 +340,24 @@ def admin():
         else: 
             return apology("access denied", 400) 
 
+
+@app.route("/addteam")
+@login_required
+# TODO @admin_required
+def addteam():
+    """Show page for adding teams to users with proper credentials"""
+    #if someone requests access to the admin page
+    if request.method == "GET":
+        #Get the role of the user from de DB
+        role = getRole()
+        #if the role equals 2 than grant access
+        if role==2:
+            return render_template("addteam.html", role=role) 
+        #else deny access
+        else: 
+            return apology("access denied", 400)
+
+
 @app.route("/newComp", methods=["GET", "POST"])
 @login_required
 # TODO @admin_required
