@@ -32,7 +32,7 @@
                                 {% elif comp.racetype_id == 2 %}
                                     <h5 class="card-title">Giro d'Italia {{comp.year}}</h5>
                                 {% elif comp.racetype_id == 3 %}
-                                    <h5 class="card-title">Vuelta Espana {{comp.year}}</h5>            
+                                    <h5 class="card-title">Vuelta a España {{comp.year}}</h5>            
                                 {% endif %}
                                 <p class="card-text">Register your team now. The deadline is {{comp.reg_stop}}</p>
                                 <a href="{{ url_for('editteam') }}" class="btn btn-primary">Register team</a>
@@ -50,7 +50,7 @@
                 {% elif comp.racetype_id == 2 %}
                     <h1 class="">Giro d'Italia {{comp.year}}</h1>
                 {% elif comp.racetype_id == 3 %}
-                    <h1 class="">Vuelta Espana {{comp.year}}</h1>
+                    <h1 class="">Vuelta a España {{comp.year}}</h1>
                 {% else %}
                     <h1 class="">Unknown competition</h1>            
                 {% endif %}
@@ -74,6 +74,7 @@
         {% endfor %}        
     {% else %}
             <div>
+                <div><h2 class="">Previous winners</h2></div>
                 <div class="row">
                     <div class="col-sm-4">
                         <div><h2 class="">Tour de France</h2></div>
@@ -84,7 +85,7 @@
                         {{ winnersGDI }}
                     </div>
                     <div class="col-sm-4">
-                        <div><h2 class="">Vuelta Espana</h2></div>
+                        <div><h2 class="">Vuelta a España</h2></div>
                         {{ winnersVE }}
                     </div>
                 </div>

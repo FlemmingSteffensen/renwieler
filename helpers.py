@@ -45,7 +45,7 @@ def getRole():
 
 def getResults(comps2):
         # Get the teams for the active competition
-        teamusers = db.execute("SELECT t.id, u.username FROM team t INNER JOIN users u ON t.user_id = u.id WHERE t.comp_id = :compid", compid=comps2[0]["id"])
+        teamusers = db.execute("SELECT t.id, u.username FROM team t INNER JOIN users u ON t.user_id = u.id WHERE t.comp_id = :compid ORDER BY u.username", compid=comps2[0]["id"])
         tbl_options = dict(
             classes=['table', 'table-sm', 'DNF'],
             no_items='Empty')
