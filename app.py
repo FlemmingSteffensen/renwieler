@@ -49,20 +49,22 @@ def index():
     comps2 = db.execute("SELECT id, racetype_id, year, startdate, reg_stop, racedays FROM competitions WHERE reg_active = 'on' AND strftime('%s', reg_stop) < strftime('%s', 'now') ")
     if comps2:
 
+        # get all the data for the current competition
         allteams, standingscomplete, chartTotals, chartCumulatives = getResults(comps2)[0:4]
         
         # render the page passing the competition and teams to the page
         return render_template("index.html", role=role, comps2=comps2, allteams=allteams, standings=standingscomplete, chartTotals=chartTotals, chartCumulatives=chartCumulatives)
+    # in all other cases show the list of winners
     else:
         winTDF = db.execute("SELECT c.year, u.username FROM users u INNER JOIN team t ON u.id = t.user_id INNER JOIN medals m ON t.id = m.team_id INNER JOIN competitions c ON c.id = m.comp_id WHERE m.medal = 1 AND c.racetype_id = 1 ORDER BY c.year")
         winGDI = db.execute("SELECT c.year, u.username FROM users u INNER JOIN team t ON u.id = t.user_id INNER JOIN medals m ON t.id = m.team_id INNER JOIN competitions c ON c.id = m.comp_id WHERE m.medal = 1 AND c.racetype_id = 2 ORDER BY c.year")
         winVE = db.execute("SELECT c.year, u.username FROM users u INNER JOIN team t ON u.id = t.user_id INNER JOIN medals m ON t.id = m.team_id INNER JOIN competitions c ON c.id = m.comp_id WHERE m.medal = 1 AND c.racetype_id = 3 ORDER BY c.year")
-
+        # Prepare a table to hold the winners
         class Winners(Table):
             year = Col('Year', column_html_attrs={'class': 'year'})
             username = Col('Winner', column_html_attrs={'class': 'winner'})
             classes = ['winner', 'table', 'table-lg']   
-
+        # add the winners to tables
         winnersTDF = Winners(winTDF)
         winnersGDI = Winners(winGDI)
         winnersVE = Winners(winVE)
@@ -226,6 +228,7 @@ def archive():
     role = getRole()
     compid = request.args.get('activecomp', None)
     comps2 = db.execute("SELECT id, racetype_id, year, startdate, reg_stop, racedays FROM competitions WHERE id = :compid", compid=compid)
+    # get all the data for the chosen competition
     allteams, standingscomplete, chartTotals, chartCumulatives = getResults(comps2)[0:4]      
     # render the page passing the competition and teams to the page
     return render_template("archive.html", role=role, comps2=comps2, allteams=allteams, standings=standingscomplete, chartTotals=chartTotals, chartCumulatives=chartCumulatives)
