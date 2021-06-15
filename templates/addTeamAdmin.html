@@ -6,9 +6,32 @@
 
 {% block main %}
     <div>
-        <h1>Add teams to </h1>
+    {% if comps %}
+        {% for comp in comps %}
+            {% if comp.racetype_id == 1 %}
+                <h1>Add teams to Tour de France {{comp.year}}</h5>
+            {% elif comp.racetype_id == 2 %}
+                <h1>Add teams to Giro d'Italia {{comp.year}}</h5>
+            {% elif comp.racetype_id == 3 %}
+                <h1>Add teams to Vuelta a España {{comp.year}}</h5>            
+            {% endif %}
         <br>
-        <h5>Edit your team for the current race</h5>
+        <h5>Users with a team in this race</h5>
+            {% if currentTeams %}
+                <ul style="list-style-type:none">
+                {% for currentTeam in currentTeams %}
+                    <li>{{currentTeam.username}}</li>
+                {% endfor %}
+                </ul>
+            {% endif %} 
         <br>
+        <h5>Add a team:</h5>
+        <form id="addTeamAdmin" action="/addTeamAdmin" method="post">
+        <input type="hidden" id="comp" name="comp" value={{activecomp_ID}}>
+
+        <button class="btn btn-primary" type="submit">Submit</button>
+        </form>
+        {% endfor %}
+    {% endif %}
     </div>
 {% endblock %}

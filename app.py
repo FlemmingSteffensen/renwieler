@@ -352,7 +352,17 @@ def addTeamAdmin():
         if role==2:
             compid = request.args.get('activecomp', None)
             comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop, racedays, reg_active, total_price FROM competitions WHERE id = :compid", compid=compid)
-            return render_template("addTeamAdmin.html", comps=comps, role=role)
+            currentTeams = db.execute("SELECT users.username \
+                                        FROM users      \
+                                        INNER JOIN team ON users.id = team.user_id \
+                                        WHERE comp_id = :compid \
+                                        ORDER BY users.username ASC", compid=compid)
+            newTeamUser = db.execute("SELECT users.username, users.id \
+                                        FROM users      \
+                                        OUTER JOIN team ON users.id = team.user_id \
+                                        WHERE comp_id = :compid \
+                                        ORDER BY users.username ASC", compid=compid)
+            return render_template("addTeamAdmin.html", comps=comps, role=role, currentTeams=currentTeams, newTeamUser=newTeamUser)
         #else deny access
         else: 
             return apology("access denied", 400)
