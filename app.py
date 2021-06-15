@@ -569,6 +569,71 @@ def points():
     # render the page passing the information to the page
     return render_template("points.html", role=role, riderpoints=riderpoints, daysInComp=daysInComp, compid=compid, comps=comps)    
 
+@app.route("/points2")
+@login_required
+#TODO @admin_required
+def points2():
+    """provide all riders of the comp and their points per day to the page"""
+    if request.method == "GET":
+        role = getRole()
+        compid = request.args.get('activecomp', None)
+        comps = db.execute("SELECT id, racetype_id, year FROM competitions WHERE id = :compid", compid=compid)
+        # Get all the riders of the competition with their DNF status
+        riderpoints = db.execute("SELECT ri.id, ri.rider, po.day1, po.day2, po.day3, po.day4, po.day5, po.day6, po.day7, po.day8, po.day9, po.day10, po.day11, po.day12, po.day13, po.day14, po.day15, po.day16, po.day17, po.day18, po.day19, po.day20, po.day21, po.day22, po.day23, po.day24, po.day25, po.day26, po.day27, po.day28, po.day29, po.day30, po.final FROM riders ri LEFT JOIN points po ON po.rider_id = ri.id WHERE ri.comp_id = :compid ORDER BY ri.rider ASC", compid=compid)
+        # Get the number of days for the competition
+        daysInComp = db.execute("SELECT racedays FROM competitions WHERE id = :compid", compid=compid)
+        # render the page passing the information to the page
+        return render_template("points2.html", role=role, riderpoints=riderpoints, daysInComp=daysInComp, compid=compid, comps=comps)  
+    """Update the points for the selected rider"""
+    if request.method == "POST":  
+        role = getRole()
+        compid = request.form.get('compid')
+        comps = db.execute("SELECT id, racetype_id, year FROM competitions WHERE id = :compid", compid=compid)
+        # for selected rider update the points per day
+        for riders in request.form.keys():
+            if riders.isdigit():
+                riderinpoints = db.execute("SELECT rider_id FROM points WHERE rider_id = :rider", rider=riders)
+                rider = str(riders)
+                if riderinpoints:
+                    db.execute("UPDATE points \
+                                SET day1 = :day1, day2 = :day2, day3 = :day3, day4 = :day4, day5 = :day5, day6 = :day6, day7 = :day7, \
+                                    day8 = :day8, day9 = :day9, day10 = :day10, day11 = :day11, day12 = :day12, day13 = :day13, day14 = :day14, \
+                                    day15 = :day15, day16 = :day16, day17 = :day17, day18 = :day18, day19 = :day19, day20 = :day20, day21 = :day21, \
+                                    day22 = :day22, day23 = :day23, day24 = :day24, day25 = :day25, day26 = :day26, day27 = :day27, day28 = :day28, \
+                                    day29 = :day29, day30 = :day30, final = :final \
+                                WHERE rider_id = :rider", rider=riders
+                                    , day1=request.form.get(rider + " 1"), day2=request.form.get(rider + " 2"), day3=request.form.get(rider + " 3")
+                                    , day4=request.form.get(rider + " 4"), day5=request.form.get(rider + " 5"), day6=request.form.get(rider + " 6")
+                                    , day7=request.form.get(rider + " 7"), day8=request.form.get(rider + " 8"), day9=request.form.get(rider + " 9")
+                                    , day10=request.form.get(rider + " 10"), day11=request.form.get(rider + " 11"), day12=request.form.get(rider + " 12")
+                                    , day13=request.form.get(rider + " 13"), day14=request.form.get(rider + " 14"), day15=request.form.get(rider + " 15")
+                                    , day16=request.form.get(rider + " 16"), day17=request.form.get(rider + " 17"), day18=request.form.get(rider + " 18")
+                                    , day19=request.form.get(rider + " 19"), day20=request.form.get(rider + " 20"), day21=request.form.get(rider + " 21")
+                                    , day22=request.form.get(rider + " 22"), day23=request.form.get(rider + " 23"), day24=request.form.get(rider + " 24")
+                                    , day25=request.form.get(rider + " 25"), day26=request.form.get(rider + " 26"), day27=request.form.get(rider + " 27")
+                                    , day28=request.form.get(rider + " 28"), day29=request.form.get(rider + " 29"), day30=request.form.get(rider + " 30")
+                                  , final=request.form.get(rider + "final")) 
+                else:
+                    db.execute("INSERT INTO points (rider_id, day1, day2, day3, day4, day5, day6, day7, day8, day9, day10, day11, \
+                                    day12, day13, day14, day15, day16, day17, day18, day19, day20, day21, day22, day23, day24, day25, \
+                                    day26, day27, day28, day29, day30, final) \
+                                VALUES (:rider, :day1, :day2, :day3, :day4, :day5, :day6, :day7, :day8, :day9, :day10, :day11, :day12, \
+                                    :day13, :day14, :day15, :day16, :day17, :day18, :day19, :day20, :day21, :day22, :day23, :day24,\
+                                    :day25, :day26, :day27, :day28, :day29, :day30, :final)", rider=riders 
+                                    , day1=request.form.get(rider + " 1"), day2=request.form.get(rider + " 2"), day3=request.form.get(rider + " 3")
+                                    , day4=request.form.get(rider + " 4"), day5=request.form.get(rider + " 5"), day6=request.form.get(rider + " 6")
+                                    , day7=request.form.get(rider + " 7"), day8=request.form.get(rider + " 8"), day9=request.form.get(rider + " 9")
+                                    , day10=request.form.get(rider + " 10"), day11=request.form.get(rider + " 11"), day12=request.form.get(rider + " 12")
+                                    , day13=request.form.get(rider + " 13"), day14=request.form.get(rider + " 14"), day15=request.form.get(rider + " 15")
+                                    , day16=request.form.get(rider + " 16"), day17=request.form.get(rider + " 17"), day18=request.form.get(rider + " 18")
+                                    , day19=request.form.get(rider + " 19"), day20=request.form.get(rider + " 20"), day21=request.form.get(rider + " 21")
+                                    , day22=request.form.get(rider + " 22"), day23=request.form.get(rider + " 23"), day24=request.form.get(rider + " 24")
+                                    , day25=request.form.get(rider + " 25"), day26=request.form.get(rider + " 26"), day27=request.form.get(rider + " 27")
+                                    , day28=request.form.get(rider + " 28"), day29=request.form.get(rider + " 29"), day30=request.form.get(rider + " 30")
+                                    , final=request.form.get(rider + "final"))
+        compid=request.form.get("compid")
+        return redirect(url_for('points', activecomp=compid))
+
 @app.route("/DNF", methods=["GET", "POST"])
 @login_required
 #TODO @admin_required

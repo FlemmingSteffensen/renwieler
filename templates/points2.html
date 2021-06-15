@@ -1,0 +1,84 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Points2
+{% endblock %}
+
+{% block adminNav %}
+    {% if role == 2 %}
+        <li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
+    {% endif %}
+{% endblock %}
+
+{% block main %}
+    {% if daysInComp %}
+        {% for comp in comps %}
+            <div>
+                {% if comp.racetype_id == 1 %}
+                    <h1 class="">Tour de France {{comp.year}}</h1>
+                {% elif comp.racetype_id == 2 %}
+                    <h1 class="">Giro d'Italia {{comp.year}}</h1>
+                {% elif comp.racetype_id == 3 %}
+                    <h1 class="">Vuelta a España {{comp.year}}</h1>
+                {% else %}
+                    <h1 class="">Unknown competition</h1>            
+                {% endif %}
+            </div>
+        {% endfor %}
+        <form id="Points2" action="/Points2" method="post">
+            <div class="form-group">
+                </div class="form-row">
+                    <div class="col-12">
+                        <input type="hidden" name="compid" value="{{ compid }}">
+                        <label for="rider">Select a rider</label>
+                        <select class="form-control" name="rider" id="rider">
+                            <option selected style="font-style: italic;">Select a rider</option>
+                            {% for rider in riderpoints %}
+                            <option name="{{ rider.rider }}" value="{{ rider.id }}">{{ rider.rider }}</option> 
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <table class="table table-striped table-sm ptable">
+                            <thead>
+                                <tr>
+                                    <th class="pname">Name</th>
+                                    {% for number in range(daysInComp[0]["racedays"]) %}
+                                    <th>{{number + 1}}</th>
+                                    {% endfor %}
+                                    <th class="">Final</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <input type="hidden" id="riderrow" name="" value="">
+                                    <td class="pname" id="ridername" style="white-space: nowrap;"></td>
+                                    {% for number in range(daysInComp[0]["racedays"]) %}
+                                        {% set day = "day" ~ (number+1)%}
+                                        <td><input class="points" type="number" name="" id="{{day}}" value="0"></td>
+                                    {% endfor %}
+                                    <td><input class="points" type="number" name="" id="final" value="0"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>    
+                </div>
+            </div>
+            <button class="btn btn-primary" type="submit">Save</button>
+        </form>
+        <script>
+            $("#rider").change(function() {
+                var val = $(this).find('option:selected').attr("name");
+                if (val == "1") {
+                    $('input:checkbox').attr('checked', true);
+                    $('input:checkbox').val("1")
+                } else {
+                    $('input:checkbox').attr('checked', false);
+                    $('input:checkbox').val("0")
+                }
+            })
+            updatePoints = document.getElementById("updatePoints");
+            $("#updatePoints").on('submit', function(e){updatePoints.submit();});
+        </script>
+    {% endif %}
+{% endblock %}
