@@ -67,15 +67,20 @@ main img
 }
 
 .rules {
-    text-align: middle;
+    text-align: left;
     margin: auto;
     width: 80%;
+    max-width: 800px;
 }
 
 .rules_table {
     margin: auto;
     width: 400px;
     border: 0.5px solid grey;
+}
+
+.rules_table_line {
+    border-bottom: 1px solid black;
 }
 
 td {

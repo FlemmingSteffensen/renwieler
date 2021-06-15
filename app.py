@@ -340,6 +340,23 @@ def editteam():
             return redirect("/myteam")
 
 
+@app.route("/addTeamAdmin")
+@login_required
+def addTeamAdmin():
+    """Show page for adding teams to users with proper credentials"""
+    #if someone requests access to the admin page
+    if request.method == "GET":
+        #Get the role of the user from de DB
+        role = getRole()
+        #if the role equals 2 than grant access
+        if role==2:
+            compid = request.args.get('activecomp', None)
+            comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop, racedays, reg_active, total_price FROM competitions WHERE id = :compid", compid=compid)
+            return render_template("addTeamAdmin.html", comps=comps, role=role)
+        #else deny access
+        else: 
+            return apology("access denied", 400)
+
 @app.route("/admin")
 @login_required
 def admin():
