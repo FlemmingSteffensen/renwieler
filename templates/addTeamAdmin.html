@@ -1,36 +1,281 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Edit team
+    Add Team Admin
 {% endblock %}
 
 {% block main %}
+    
     <div>
-    {% if comps %}
-        {% for comp in comps %}
-            {% if comp.racetype_id == 1 %}
-                <h1>Add teams to Tour de France {{comp.year}}</h5>
-            {% elif comp.racetype_id == 2 %}
-                <h1>Add teams to Giro d'Italia {{comp.year}}</h5>
-            {% elif comp.racetype_id == 3 %}
-                <h1>Add teams to Vuelta a España {{comp.year}}</h5>            
-            {% endif %}
-        <br>
-        <h5>Users with a team in this race</h5>
-            {% if currentTeams %}
-                <ul style="list-style-type:none">
-                {% for currentTeam in currentTeams %}
-                    <li>{{currentTeam.username}}</li>
-                {% endfor %}
-                </ul>
-            {% endif %} 
-        <br>
-        <h5>Add a team:</h5>
         <form id="addTeamAdmin" action="/addTeamAdmin" method="post">
-        <input type="hidden" id="comp" name="comp" value={{activecomp_ID}}>
+            <div class="form-group">
 
-        <button class="btn btn-primary" type="submit">Submit</button>
+                <div class="form-row">
+                    <div class="col-sm-3 offset-sm-8 leaderbord">
+                        <div class="card border-success">
+                            <div class="card-body text-success">
+                                <div class="card-header">
+                                    <h2 class="card-title">Selected team</h2>
+                                </div>
+                                <p class="card-text" id="total_money">Total money: {{total_price}}</p>
+                                <p class="card-text" id="money_spend">Money spend: </p>
+                                <h4 class="card-text">Your riders: </h4>
+                                <ol class="myteam">
+                                    <li id="1"></li>
+                                    <li id="2"></li>
+                                    <li id="3"></li>
+                                    <li id="4"></li>
+                                    <li id="5"></li>
+                                    <li id="6"></li>
+                                    <li id="7"></li>
+                                    <li id="8"></li>
+                                    <li id="9"></li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="col-sm-12">
+                        {% if comps %}
+                        <div class="card border-dark">
+                            <div class="card-body text-dark">
+                                <div class="card-header">
+                                    {% set ns = namespace(last_team = "nothing") %}
+                                    {% set ct = namespace(count = 0) %}
+                                    {% set rank = namespace(value = 0) %}
+                                    {% set money = namespace(class = "money") %}
+                                    {% for comp in comps %}
+                                        {% if comp.racetype_id == 1 %}
+                                            <h1>Add teams to Tour de France {{comp.year}}</h5>
+                                        {% elif comp.racetype_id == 2 %}
+                                            <h1>Add teams to Giro d'Italia {{comp.year}}</h5>
+                                        {% elif comp.racetype_id == 3 %}
+                                            <h1>Add teams to Vuelta a España {{comp.year}}</h5>            
+                                        {% endif %}
+                                </div>        
+                                <h5>Users with a team in this race</h5>
+                                    {% if currentTeams %}
+                                        <ul style="list-style-type:none">
+                                        {% for currentTeam in currentTeams %}
+                                            <li>{{currentTeam.username}}</li>
+                                        {% endfor %}
+                                        </ul>
+                                    {% endif %} 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="col-sm-12">
+                        <div class="card border-primary">
+                            <div class="card-body text-primary">
+                                <div class="card-header">
+                                    <h5>Add a team:</h5>
+                                </div>
+                                <p class="card-text">
+                                    <input type="hidden" id="comp" name="comp" value={{activecomp_ID}}>
+                                    <select class="form-control" name="username" id="username">
+                                        <option selected style="font-style: italic;">Select a user</option>
+                                        {% for user in newTeamUser %}
+                                            <option type="number"  id="user_id" name="user_id" value="{{ user.id }}">{{ user.username }}</option> 
+                                        {% endfor %}
+                                    </select>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                
+                <div class="form-row">
+                    <div class="col-sm-8">
+
+                        <div class="card-columns">
+                            {% for rider in allRiders %}
+                                {% if ct.count == 0 %}
+                                    {% set ct.count = ct.count + 1 %}
+                                            <div class="card border-info">
+                                                <div class="card-body text-info">
+                                                    <div class="card-header">
+                                                        <h5 class="card-title">Choose 9 riders</h5>
+                                                    </div>
+                                                    <p class="card-text">Number the riders you would like to have in your team from 1 to 9. Where 1 is your Captain.</p>
+                                                    <p class="card-text">If you want to edit a previous made team, the Mint colored boxes are riders you have chosen.</br> Give the rider you don't want a ranking of 0 and select/rank another rider.</p>
+                                                    <p>Some riders cost money, you can see the total money you can spend, and the money you have left in the green box.</p>
+                                                    <ul>
+                                                        <li style="color:black">Free: <b class="money"> 0 </b></li>
+                                                        <li style="color:black">Bronze: <b class="bronze"> 1 </b></li>
+                                                        <li style="color:black">Silver: <b class="silver"> 2 </b></li>
+                                                        <li style="color:black">Gold: <b class="gold"> 3 </b></li>
+                                                    </ul>
+                                                    <p>The riders you have currently selected are visible in the same box as well as their ranking</p>
+                                {% endif %}
+                                <!--  Makes the coin different depending on the price value -->
+                                {% if rider.price == 3 %}
+                                    {% set money.class = "gold" %}
+                                {% elif rider.price == 2 %}
+                                    {% set money.class = "silver" %}
+                                {% elif rider.price == 1 %}
+                                    {% set money.class = "bronze" %}
+                                {% else %}
+                                    {% set money.class = "money" %}
+                                {% endif %}
+                                <!--  Checks if this riders rides for the same team as last rider, if not make a new bootstrap card -->
+                                {% if rider.rides_for != ns.last_team %}
+                                    {% set ns.last_team = rider.rides_for %}
+                                                </div>
+                                            </div>
+                                            <div class="card border-dark">
+                                                <div class="card-body text-dark">
+                                                    <div class="card-header">
+                                                        <h5 class="card-title">{{ns.last_team}}</h5>
+                                                    </div>
+                                                    <div>
+                                            {% set rank.value = 0 %}
+                                                {% for teamRider in teamRiders %} 
+                                                    {% if rider.rider == teamRider.rider %} 
+                                                        {% set rank.value = teamRider.rank %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <input type="number" id="{{rider.rider}}" name="{{rider.id}}" value="{{rank.value}}" min="0" max="9" {% if rank.value > 0 %} style="background-color:#3CBC8D;" {% endif %}>
+                                                <label for={{rider.id}}> <b class="{{money.class}}"> {{rider.price}} </b> {{rider.rider}}<i>{{rider.nationality}}</i></label>
+                                            </div>
+                                {% else %}
+                                        <div>
+                                    {% set rank.value = 0 %}
+                                    {% for teamRider in teamRiders %} 
+                                        {% if rider.rider == teamRider.rider %} 
+                                            {% set rank.value = teamRider.rank %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    <input type="number" id="{{rider.rider}}" name="{{rider.id}}" value="{{rank.value}}" min="0" max="9" {% if rank.value > 0 %} style="background-color:#3CBC8D;" {% endif %}>
+                                    <label for={{rider.id}}><b class="{{money.class}}"> {{rider.price}} </b> {{rider.rider}} <i>{{rider.nationality}}</i></label>
+                                        </div>
+                                {% endif %}
+                            {% endfor %}
+                                
+                                    </div>
+                                </div>
+                            </div>
+
+            <button class="btn btn-primary" type="submit">Submit</button>
         </form>
+        <script>
+                //Checking if 9 riders are selected and follow the competition rules
+                addTeamAdmin = document.getElementById("addTeamAdmin");
+                let user_id = document.getElementById("user_id");
+                // Check for duplicates from stackoverflow https://stackoverflow.com/questions/49215358/checking-for-duplicate-strings-in-javascript-array/49215411
+                function checkIfDuplicateExists(w){
+                    return new Set(w).size !== w.length 
+                }
+                //When change in form, function to get the currently selected riders
+                function getSelectedRiders() {
+                    let form = document.getElementsByTagName("form");
+                    let inputs = form[0].getElementsByTagName("input");
+                    let chosenRiders = {};
+
+                    // Remove previous riders selected riders box 
+                    for(let i = 1; i < 10; i++) {
+                        document.getElementById(i).innerHTML = "";
+                    }
+
+                    // Get the selected riders (with ranking > 0)
+                    for(let i = 0; i < inputs.length; i++) {
+                        if(inputs[i].value > 0 && inputs[i].name != "comp" && inputs[i].name != "team_id") {
+                            chosenRiders[inputs[i].id] = inputs[i].value;
+                        }
+                    }
+                    // Paste riders to selected riders box
+                    let entries = Object.entries(chosenRiders);
+                    let usedRanking = "";
+                    let rankingPlus = "";
+                    let currentSelection = [];
+                    for(const[id,value] of entries) {
+                        usedRanking = document.getElementById(value).innerHTML;
+                        currentSelection.push(id);
+
+                        // If ranking number is already used, show both (or more) selected riders
+                        if(usedRanking.length != 0) {
+                            if(rankingPlus.length != 0) {
+                                rankingPlus = rankingPlus.concat(" AND ", id);
+                            } else {
+                                rankingPlus = usedRanking.concat(" AND ", id);
+                            }
+                            document.getElementById(value).innerHTML = rankingPlus;
+                        } else {
+                            document.getElementById(value).innerHTML = id;
+                        }
+                        
+                    }
+                    return currentSelection;                        
+                }
+
+                // Get the rider costs and calculate remaining money
+                function getPrices(currentRiders) {
+                    let prices = {{ rider_price|safe }};
+                    let prices_entries = Object.entries(prices);
+                    let money_used = 0;
+                    for(const[rider,price] of prices_entries) {
+                        for(let i = 0; i < currentRiders.length; i++) {
+                            if(currentRiders[i] == rider) {
+                                money_used += price;
+                            }
+                        }
+                    }
+                    document.getElementById("money_spend").innerHTML = "Money spend: " + money_used.toString();
+                    return money_used;
+                }
+
+                window.onload = function() {
+                    let currentRiders = getSelectedRiders();
+                    getPrices(currentRiders);
+                };
+
+
+                // Catches the change in form and calls getSelectedRiders
+                addTeamAdmin.addEventListener('change', function() {
+                    let currentRiders = getSelectedRiders();
+                    getPrices(currentRiders);
+                });
+
+                // Sends form to app.py after a couple of checks
+                $("#addTeamAdmin").on('submit', function(e){
+                    e.preventDefault();
+                    var riders = [];
+                    $.each($("input[type='number']"), function(){
+                        if ($(this).val() > 0) {
+                            riders.push($(this).val());
+                        }
+                    });
+
+                    // Initialize for money check
+                        let money_used = getPrices(getSelectedRiders());
+                        let total_money = document.getElementById("total_money").innerHTML;
+                        total_money = total_money.replace( /[^\d.]/g, '' );
+                        total_money = total_money - money_used;
+                        //Checks if you have enough but not too many riders
+                        if (riders.length < 9) {
+                            alert( "You should select more riders" );
+                        }
+                        else if (riders.length > 9) {
+                            alert("You should select less riders");
+                        }
+                        // Checks if you spend too much money
+                        else if (total_money < 0) {
+                            alert("You spend too much money!");
+                        }
+                        else {
+                            if (checkIfDuplicateExists(riders)) {
+                                alert("Please rank your riders, use each number once. You have used: " + JSON.stringify(riders.sort()));
+                            }
+                            else {
+                                //addTeamAdmin.submit();
+                            }                            
+                        }  
+                });
+            </script>
         {% endfor %}
     {% endif %}
     </div>
