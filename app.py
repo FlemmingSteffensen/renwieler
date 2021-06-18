@@ -352,6 +352,7 @@ def addTeamAdmin():
         if role==2:
             compid = request.args.get('activecomp', None)
             comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop, racedays, reg_active, total_price FROM competitions WHERE id = :compid", compid=compid)
+            total_price = comps[0]["total_price"]
             currentTeams = db.execute("SELECT users.username \
                                         FROM users      \
                                         INNER JOIN team ON users.id = team.user_id \
@@ -372,25 +373,27 @@ def addTeamAdmin():
             for rider in allRiders:
                 rider_price[rider["rider"]] = rider["price"]
             jsonify(rider_price)
-            return render_template("addTeamAdmin.html", comps=comps, role=role, currentTeams=currentTeams, newTeamUser=newTeamUser, allRiders=allRiders, rider_price=rider_price)
+            return render_template("addTeamAdmin.html", compid=compid, comps=comps, total_price=total_price, role=role, currentTeams=currentTeams, newTeamUser=newTeamUser, allRiders=allRiders, rider_price=rider_price)
         #else deny access
         else: 
             return apology("access denied", 400)
 
     if request.method == "POST":
-        user = request.form.get("user_id")
+        user = request.form.get("username")
         compid = request.form.get("comp")
+        print(user)
+        print(compid)
         # Insert a new team
         # insert competion in competition table
-        # db.execute("INSERT INTO team (user_id, comp_id) VALUES (:user, :compid)", user=user, compid=compid)
-        # teamid = db.execute("SELECT id FROM team WHERE user_id = :user AND comp_id = :compid", user=user, compid=compid)
-        # team_id = teamid[0]["id"]
-        # for k,v in request.form.items():
-        #     if k.isdigit():
-        #         if v.isdigit():
-        #             f = int(v)
-        #             if f > 0: 
-        #                 db.execute("INSERT INTO team_member (team_id, rider_id, rank) VALUES (:team_id, :rider_id, :rank)", team_id=team_id, rider_id=k, rank=f)
+        db.execute("INSERT INTO team (user_id, comp_id) VALUES (:user, :compid)", user=user, compid=compid)
+        teamid = db.execute("SELECT id FROM team WHERE user_id = :user AND comp_id = :compid", user=user, compid=compid)
+        team_id = teamid[0]["id"]
+        for k,v in request.form.items():
+            if k.isdigit():
+                if v.isdigit():
+                    f = int(v)
+                    if f > 0: 
+                        db.execute("INSERT INTO team_member (team_id, rider_id, rank) VALUES (:team_id, :rider_id, :rank)", team_id=team_id, rider_id=k, rank=f)
         return redirect("/addTeamAdmin")
 
 @app.route("/admin")

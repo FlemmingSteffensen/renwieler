@@ -76,7 +76,7 @@
                                     <h5>Add a team:</h5>
                                 </div>
                                 <p class="card-text">
-                                    <input type="hidden" id="comp" name="comp" value={{activecomp_ID}}>
+                                    <input type="hidden" id="comp" name="comp" value="{{ compid }}">
                                     <select class="form-control" name="username" id="username">
                                         <option selected style="font-style: italic;">Select a user</option>
                                         {% for user in newTeamUser %}
@@ -271,7 +271,7 @@
                                 alert("Please rank your riders, use each number once. You have used: " + JSON.stringify(riders.sort()));
                             }
                             else {
-                                //addTeamAdmin.submit();
+                                addTeamAdmin.submit();
                             }                            
                         }  
                 });
