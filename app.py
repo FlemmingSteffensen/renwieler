@@ -359,8 +359,9 @@ def addTeamAdmin():
                                         ORDER BY users.username ASC", compid=compid)
             newTeamUser = db.execute("SELECT users.username, users.id \
                                         FROM users      \
-                                        OUTER JOIN team ON users.id = team.user_id \
-                                        WHERE comp_id = :compid \
+                                        WHERE users.id NOT IN (SELECT team.user_id \
+                                                                FROM team \
+                                                                WHERE team.comp_id = :compid)    \
                                         ORDER BY users.username ASC", compid=compid)
             return render_template("addTeamAdmin.html", comps=comps, role=role, currentTeams=currentTeams, newTeamUser=newTeamUser)
         #else deny access
