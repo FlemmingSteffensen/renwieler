@@ -340,7 +340,7 @@ def editteam():
             return redirect("/myteam")
 
 
-@app.route("/addTeamAdmin")
+@app.route("/addTeamAdmin", methods=["GET", "POST"])
 @login_required
 def addTeamAdmin():
     """Show page for adding teams to users with proper credentials"""
@@ -363,10 +363,35 @@ def addTeamAdmin():
                                                                 FROM team \
                                                                 WHERE team.comp_id = :compid)    \
                                         ORDER BY users.username ASC", compid=compid)
-            return render_template("addTeamAdmin.html", comps=comps, role=role, currentTeams=currentTeams, newTeamUser=newTeamUser)
+            allRiders = db.execute("Select id, comp_id, rider, nationality, price, rides_for \
+                                    FROM riders \
+                                    WHERE comp_id = :activecomp_ID \
+                                    Order by rides_for ASC, rider ASC", activecomp_ID=compid)
+            # Gather the prices of all riders
+            rider_price = {}
+            for rider in allRiders:
+                rider_price[rider["rider"]] = rider["price"]
+            jsonify(rider_price)
+            return render_template("addTeamAdmin.html", comps=comps, role=role, currentTeams=currentTeams, newTeamUser=newTeamUser, allRiders=allRiders, rider_price=rider_price)
         #else deny access
         else: 
             return apology("access denied", 400)
+
+    if request.method == "POST":
+        user = request.form.get("user_id")
+        compid = request.form.get("comp")
+        # Insert a new team
+        # insert competion in competition table
+        # db.execute("INSERT INTO team (user_id, comp_id) VALUES (:user, :compid)", user=user, compid=compid)
+        # teamid = db.execute("SELECT id FROM team WHERE user_id = :user AND comp_id = :compid", user=user, compid=compid)
+        # team_id = teamid[0]["id"]
+        # for k,v in request.form.items():
+        #     if k.isdigit():
+        #         if v.isdigit():
+        #             f = int(v)
+        #             if f > 0: 
+        #                 db.execute("INSERT INTO team_member (team_id, rider_id, rank) VALUES (:team_id, :rider_id, :rank)", team_id=team_id, rider_id=k, rank=f)
+        return redirect("/addTeamAdmin")
 
 @app.route("/admin")
 @login_required
