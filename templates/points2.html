@@ -68,17 +68,22 @@
         </form>
         <script>
             $("#rider").change(function() {
-                var val = $(this).find('option:selected').attr("name");
-                if (val == "1") {
-                    $('input:checkbox').attr('checked', true);
-                    $('input:checkbox').val("1")
-                } else {
-                    $('input:checkbox').attr('checked', false);
-                    $('input:checkbox').val("0")
+                var val = $(this).find('option:selected').attr("value");
+                var riders = {{ riderpoints|tojson }};
+                for (i = 0; i < {{ riderpoints|length }}; i++) {
+                    if (riders[i].id == val) {
+                        var rname = riders[i].rider;
+                        $("#ridername").html(rname);
+                        for (j = 0; j < {{ daysInComp[0]["racedays"]}}; j++) {
+                            var dayj = 'day' + (j + 1);
+                            var day2 = riders[i][dayj];
+                            $('#' + dayj).val(day2); 
+                        }
+                        var dayfinal = riders[i].final;
+                        $("#final").val();                                                
+                    }
                 }
-            })
-            updatePoints = document.getElementById("updatePoints");
-            $("#updatePoints").on('submit', function(e){updatePoints.submit();});
+            });                
         </script>
     {% endif %}
 {% endblock %}
