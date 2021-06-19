@@ -204,8 +204,9 @@ def chngpw():
 @login_required
 def rules():
     """Show rules of the current race (hard coded for now)"""
+    role = getRole()
     # Direct user to rules page
-    return render_template("rules.html") 
+    return render_template("rules.html", role=role) 
 
 
 @app.route("/history")
@@ -238,6 +239,7 @@ def archive():
 @login_required
 def myteam():
     """Show the current team of the user"""
+    role = getRole()
     if request.method == "GET":
         user_id = session.get("user_id")
         activecomps = db.execute("SELECT c.id, c.startdate, c.racetype_id, c.year, t.id AS team_id \
@@ -257,17 +259,18 @@ def myteam():
                                             AND t.comp_id = :activecomps \
                                         ORDER BY tm.rank ASC" , user_id=user_id, activecomps=activecomps[0]["id"])
             # Direct user to my team page
-            return render_template("myteam.html", activecomps = activecomps, riders=riders, canRegisterOrEdit=canRegisterOrEdit)  
+            return render_template("myteam.html", role=role, activecomps = activecomps, riders=riders, canRegisterOrEdit=canRegisterOrEdit)  
         else:
             # Direct user to my team page without a team
             noteam = 1
-            return render_template("myteam.html", noteam=noteam)
+            return render_template("myteam.html", role=role, noteam=noteam)
 
 
 @app.route("/editteam", methods=["GET", "POST"])
 @login_required
 def editteam():
     """Show the editteam page of the current race"""
+    role = getRole()
     if request.method == "GET":
         # Get the user_id to find his/her team for the current race
         user_id = session.get("user_id")
@@ -305,7 +308,7 @@ def editteam():
             rider_price[rider["rider"]] = rider["price"]
         jsonify(rider_price)
         # Send team riders and competition riders to the html template
-        return render_template("editteam.html", teamRiders=teamRiders, allRiders = allRiders, activecomp_ID=activecomp_ID, team_id=team_id, total_price=total_price, rider_price=rider_price)
+        return render_template("editteam.html", role=role, teamRiders=teamRiders, allRiders = allRiders, activecomp_ID=activecomp_ID, team_id=team_id, total_price=total_price, rider_price=rider_price)
     """Edit/update/insert the current team"""
     if request.method == "POST":
         user = session.get("user_id")
@@ -324,7 +327,7 @@ def editteam():
                             f = int(v)
                             if f > 0: 
                                 db.execute("UPDATE team_member SET rider_id = :rider_id WHERE team_id = :team_id AND rank = :rank", rider_id=k, team_id=team_id, rank=f)
-                return redirect("/myteam")
+                return redirect("/myteam", role=role)
         # Insert a new team
         else:
             # insert competion in competition table
@@ -337,7 +340,7 @@ def editteam():
                         f = int(v)
                         if f > 0: 
                             db.execute("INSERT INTO team_member (team_id, rider_id, rank) VALUES (:team_id, :rider_id, :rank)", team_id=team_id, rider_id=k, rank=f)
-            return redirect("/myteam")
+            return redirect("/myteam", role=role)
 
 
 @app.route("/addTeamAdmin", methods=["GET", "POST"])
@@ -673,8 +676,10 @@ def DNF():
         comps = db.execute("SELECT id, racetype_id, year FROM competitions WHERE id = :compid", compid=compid)
         # Get all the riders of the competition with their DNF status
         riders = db.execute("SELECT ri.id, ri.rider, ri.DNF FROM riders ri WHERE ri.comp_id = :compid ORDER BY ri.rider ASC", compid=compid)
+        # Get all riders with DNF status
+        dnfriders = db.execute("SELECT id, rider, DNF FROM riders WHERE comp_id = :compid AND DNF = 1 ORDER BY rider ASC", compid=compid)
         # render the page passing the information to the page
-        return render_template("DNF.html", role=role, riders=riders, compid=compid, comps=comps)  
+        return render_template("DNF.html", role=role, riders=riders, compid=compid, comps=comps, dnfriders = dnfriders)  
     """Update the DNF status for the selected rider"""
     if request.method == "POST":  
         role = getRole()
