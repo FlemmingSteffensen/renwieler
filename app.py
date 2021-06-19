@@ -677,8 +677,10 @@ def DNF():
         comps = db.execute("SELECT id, racetype_id, year FROM competitions WHERE id = :compid", compid=compid)
         # Get all the riders of the competition with their DNF status
         riders = db.execute("SELECT ri.id, ri.rider, ri.DNF FROM riders ri WHERE ri.comp_id = :compid ORDER BY ri.rider ASC", compid=compid)
+        # Get all riders with DNF status
+        dnfriders = db.execute("SELECT id, rider, DNF FROM riders WHERE comp_id = :compid AND DNF = 1 ORDER BY rider ASC", compid=compid)
         # render the page passing the information to the page
-        return render_template("DNF.html", role=role, riders=riders, compid=compid, comps=comps)  
+        return render_template("DNF.html", role=role, riders=riders, compid=compid, comps=comps, dnfriders = dnfriders)  
     """Update the DNF status for the selected rider"""
     if request.method == "POST":  
         role = getRole()

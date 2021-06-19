@@ -28,6 +28,8 @@
                 <div class="form-group">
                     </div class="form-row">
                         <div class="col-12">
+                            <h5>Change DNF status for a rider:</h5>
+                            <br>
                             <input type="hidden" name="compid" value="{{ comp.id }}">
                             <label for="rider">Select a rider</label>
                             <select class="form-control" name="rider" id="rider">
@@ -41,8 +43,20 @@
                         </div>    
                     </div>
                 </div>
+                <br>
                 <button class="btn btn-primary" type="submit">Save</button>
             </form>
+            <div class="col-12">
+                <br>
+                {% if dnfriders %}
+                    <h5>Riders with DNF status in this competition</h5>
+                    <ul style="list-style-type:none">
+                    {% for dnfrider in dnfriders %}
+                        <li>{{ dnfrider.rider }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}    
+            </div>
             <script>
                 DNF = document.getElementById("DNF");
                 $("#DNF").on('submit', function(){DNF.submit();});
