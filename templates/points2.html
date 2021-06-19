@@ -25,7 +25,7 @@
                 {% endif %}
             </div>
         {% endfor %}
-        <form id="Points2" action="/Points2" method="post">
+        <form id="points2" action="/points2" method="post">
             <div class="form-group">
                 </div class="form-row">
                     <div class="col-12">
@@ -55,9 +55,9 @@
                                     <td class="pname" id="ridername" style="white-space: nowrap;"></td>
                                     {% for number in range(daysInComp[0]["racedays"]) %}
                                         {% set day = "day" ~ (number+1)%}
-                                        <td><input class="points" type="number" name="" id="{{day}}" value="0"></td>
+                                        <td><input class="points" type="number" name="{{day}}" id="{{day}}" value="0"></td>
                                     {% endfor %}
-                                    <td><input class="points" type="number" name="" id="final" value="0"></td>
+                                    <td><input class="points" type="number" name="final" id="final" value="0"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -67,23 +67,27 @@
             <button class="btn btn-primary" type="submit">Save</button>
         </form>
         <script>
+            points2 = document.getElementById("points2");
+            $("#points2").on('submit', function(e){points2.submit();}); 
             $("#rider").change(function() {
                 var val = $(this).find('option:selected').attr("value");
                 var riders = {{ riderpoints|tojson }};
                 for (i = 0; i < {{ riderpoints|length }}; i++) {
                     if (riders[i].id == val) {
                         var rname = riders[i].rider;
+                        var rid = riders[i].id;
                         $("#ridername").html(rname);
+                        $("#riderrow").attr('name', rid);
                         for (j = 0; j < {{ daysInComp[0]["racedays"]}}; j++) {
                             var dayj = 'day' + (j + 1);
                             var day2 = riders[i][dayj];
                             $('#' + dayj).val(day2); 
                         }
                         var dayfinal = riders[i].final;
-                        $("#final").val();                                                
+                        $("#final").val(dayfinal);                                               
                     }
                 }
-            });                
+            });              
         </script>
     {% endif %}
 {% endblock %}
