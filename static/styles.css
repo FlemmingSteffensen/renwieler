@@ -193,3 +193,19 @@ input[type="number"] {
     border-color: black;
     white-space: pre;
   }
+
+.emerald {
+    border-radius: 100%;
+    background: #50C878;
+    border: solid 1px;
+    border-color: black;
+    white-space: pre;
+  }
+
+  .ruby {
+    border-radius: 100%;
+    background: #E0115F;
+    border: solid 1px;
+    border-color: black;
+    white-space: pre;
+  }

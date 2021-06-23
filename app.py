@@ -327,7 +327,7 @@ def editteam():
                             f = int(v)
                             if f > 0: 
                                 db.execute("UPDATE team_member SET rider_id = :rider_id WHERE team_id = :team_id AND rank = :rank", rider_id=k, team_id=team_id, rank=f)
-                return redirect("/myteam", role=role)
+                return redirect("/myteam")
         # Insert a new team
         else:
             # insert competion in competition table
@@ -340,7 +340,7 @@ def editteam():
                         f = int(v)
                         if f > 0: 
                             db.execute("INSERT INTO team_member (team_id, rider_id, rank) VALUES (:team_id, :rider_id, :rank)", team_id=team_id, rider_id=k, rank=f)
-            return redirect("/myteam", role=role)
+            return redirect("/myteam")
 
 
 @app.route("/addTeamAdmin", methods=["GET", "POST"])
