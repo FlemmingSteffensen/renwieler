@@ -1,5 +1,6 @@
 import os
 import csv
+import pandas as pd
 
 from cs50 import SQL
 from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for
@@ -614,6 +615,20 @@ def points2():
         riderpoints = db.execute("SELECT ri.id, ri.rider, po.day1, po.day2, po.day3, po.day4, po.day5, po.day6, po.day7, po.day8, po.day9, po.day10, po.day11, po.day12, po.day13, po.day14, po.day15, po.day16, po.day17, po.day18, po.day19, po.day20, po.day21, po.day22, po.day23, po.day24, po.day25, po.day26, po.day27, po.day28, po.day29, po.day30, po.final FROM riders ri LEFT JOIN points po ON po.rider_id = ri.id WHERE ri.comp_id = :compid ORDER BY ri.rider ASC", compid=compid)
         # Get the number of days for the competition
         daysInComp = db.execute("SELECT racedays FROM competitions WHERE id = :compid", compid=compid)
+
+        # Get all riders + points for excel
+        riderPointsExcel = db.execute("SELECT ri.id, ri.rider, po.day1, po.day2, po.day3, po.day4, po.day5, po.day6, po.day7, po.day8, po.day9, \
+                                                po.day10, po.day11, po.day12, po.day13, po.day14, po.day15, po.day16, po.day17, po.day18, po.day19,\
+                                                po.day20, po.day21, po.day22, po.day23, po.day24, po.day25, po.day26, po.day27, po.day28, po.day29, \
+                                                po.day30, po.final FROM riders ri LEFT JOIN points po ON po.rider_id = ri.id \
+                                                WHERE ri.comp_id = :compid ORDER BY ri.rider ASC", compid=compid)
+        
+        # Converting into dataframe
+        df = pd.DataFrame(riderPointsExcel)
+        with pd.ExcelWriter('ridersPoints.xlsx', engine='xlsxwriter') as writer:
+            df.to_excel(writer, sheet_name='Sheet')
+
+
         # render the page passing the information to the page
         return render_template("points2.html", role=role, riderpoints=riderpoints, daysInComp=daysInComp, compid=compid, comps=comps)  
     """Update the points for the selected rider"""
