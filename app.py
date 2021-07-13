@@ -1,6 +1,7 @@
 import os
 import csv
 import pandas as pd
+import xlsxwriter
 
 from cs50 import SQL
 from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for
