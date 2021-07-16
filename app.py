@@ -626,7 +626,7 @@ def points2():
         
         # Converting into dataframe
         df = pd.DataFrame(riderPointsExcel)
-        with pd.ExcelWriter('ridersPoints.xlsx', engine='xlsxwriter') as writer:
+        with pd.ExcelWriter('static/ridersPoints.xlsx', engine='xlsxwriter') as writer:
             df.to_excel(writer, sheet_name='Sheet')
 
 
