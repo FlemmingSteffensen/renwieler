@@ -30,6 +30,8 @@
                             </div>
                             <p class="card-text" id="total_money">Total money: {{total_price}}</p>
                             <p class="card-text" id="money_spend">Money spend: </p>
+                            <p class="card-text" id="min_outsider">Minimum outsiders: {{min_outsider}}</p>
+                            <p class="card-text" id="no_outsiders">Number of outsiders: </p>
                             <h4 class="card-text">Your riders: </h4>
                             <ol class="myteam">
                                 <li id="1"></li>
@@ -70,6 +72,7 @@
                                         <li style="color:black"><b class="ruby"> 5 </b> Ruby</li>
                                     </ul>
                                     <p>The riders you have currently selected are visible in the same box as well as their ranking</p>
+                                    <p>Keep in mind to include some outsider riders in your team!</p>
                 {% endif %}
                 <!--  Makes the coin different depending on the price value -->
                 {% if rider.price == 5 %}
@@ -190,9 +193,26 @@
                     return money_used;
                 }
 
+                // Get the rider outsider status and calculate if enough are selected
+                function getOutsiders(currentRiders) {
+                    let outsiders = {{ rider_outsider|safe }};
+                    let outsiders_entries = Object.entries(outsiders);
+                    let outsiders_selected = 0;
+                    for(const[rider,outsider] of outsiders_entries) {
+                        for(let i = 0; i < currentRiders.length; i++) {
+                            if(currentRiders[i] == rider) {
+                                outsiders_selected += outsider;
+                            }
+                        }
+                    }
+                    document.getElementById("no_outsiders").innerHTML = "Outsiders selected: " + outsiders_selected.toString();
+                    return outsiders_selected;
+                }
+
                 window.onload = function() {
                     let currentRiders = getSelectedRiders();
                     getPrices(currentRiders);
+                    getOutsiders(currentRiders);
                 };
 
 
@@ -200,6 +220,7 @@
                 editteam.addEventListener('change', function() {
                     let currentRiders = getSelectedRiders();
                     getPrices(currentRiders);
+                    getOutsiders(currentRiders);
                 });
 
                 // Sends form to app.py after a couple of checks
@@ -217,6 +238,11 @@
                         let total_money = document.getElementById("total_money").innerHTML;
                         total_money = total_money.replace( /[^\d.]/g, '' );
                         total_money = total_money - money_used;
+                    // Initialize for outsiders check
+                        let outsiders_selected = getOutsiders(getSelectedRiders());
+                        let min_outsider = document.getElementById("min_outsider").innerHTML;
+                        min_outsider = min_outsider.replace( /[^\d.]/g, '' );
+                        min_outsider = min_outsider - outsiders_selected;
                         //Checks if you have enough but not too many riders
                         if (riders.length < 9) {
                             alert( "You should select more riders" );
@@ -227,6 +253,10 @@
                         // Checks if you spend too much money
                         else if (total_money < 0) {
                             alert("You spend too much money!");
+                        }
+                        // Checks if you selected enough outsiders
+                        else if (min_outsider > 0) {
+                            alert("You should select more outsiders, make the poule exiting!");
                         }
                         else {
                             if (checkIfDuplicateExists(riders)) {

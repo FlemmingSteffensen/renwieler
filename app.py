@@ -277,7 +277,7 @@ def editteam():
         # Get the user_id to find his/her team for the current race
         user_id = session.get("user_id")
         # Get the current team_id and competition_id
-        editTeamID = db.execute("SELECT c.id, c.total_price, t.id AS team_id \
+        editTeamID = db.execute("SELECT c.id, c.total_price, t.id AS team_id, c.min_outsider \
                                         FROM competitions AS c \
                                         INNER JOIN racetypes AS r ON c.racetype_id = r.id\
                                         INNER JOIN team AS t ON c.id = t.comp_id \
@@ -288,29 +288,33 @@ def editteam():
         else:
             team_id = None
         # Get the ID and total price for active competition
-        activecomp = db.execute("SELECT ID, total_price FROM competitions WHERE reg_active = 'on'")
+        activecomp = db.execute("SELECT ID, total_price, min_outsider FROM competitions WHERE reg_active = 'on'")
         activecomp_ID = activecomp[0]["id"]
         total_price = activecomp[0]["total_price"]
+        min_outsider = activecomp[0]["min_outsider"]
         # Get all the riders of the competition
-        allRiders = db.execute("Select id, comp_id, rider, nationality, rides_for, price, comp_id \
+        allRiders = db.execute("Select id, comp_id, rider, nationality, rides_for, price, comp_id, outsider \
                                     FROM riders \
                                     WHERE comp_id = :activecomp_ID \
                                     Order by rides_for ASC, rider ASC", activecomp_ID=activecomp_ID)
         # Get the riders with info of the users team
-        teamRiders = db.execute("SELECT r.rider, r.nationality, r.rides_for, tm.rank, tm.team_id, t.comp_id \
+        teamRiders = db.execute("SELECT r.rider, r.nationality, r.rides_for, tm.rank, tm.team_id, t.comp_id, r.outsider \
                                     FROM riders AS r \
                                     INNER JOIN team_member AS tm ON r.id = tm.rider_id \
                                     INNER JOIN team AS t ON t.id = tm.team_id \
                                         WHERE t.user_id = :user_id \
                                         AND t.comp_id = :activecomp_ID \
                                     ORDER BY tm.rank ASC" , user_id=user_id, activecomp_ID=activecomp_ID)
-        # Gather the prices of all riders
+        # Gather the prices and outsider status of all riders
         rider_price = {}
+        rider_outsider = {}
         for rider in allRiders:
             rider_price[rider["rider"]] = rider["price"]
+            rider_outsider[rider["rider"]] = rider["outsider"]
         jsonify(rider_price)
+        jsonify(rider_outsider)
         # Send team riders and competition riders to the html template
-        return render_template("editteam.html", role=role, teamRiders=teamRiders, allRiders = allRiders, activecomp_ID=activecomp_ID, team_id=team_id, total_price=total_price, rider_price=rider_price)
+        return render_template("editteam.html", role=role, teamRiders=teamRiders, allRiders = allRiders, activecomp_ID=activecomp_ID, team_id=team_id, total_price=total_price, min_outsider=min_outsider, rider_price=rider_price, rider_outsider=rider_outsider)
     """Edit/update/insert the current team"""
     if request.method == "POST":
         user = session.get("user_id")
