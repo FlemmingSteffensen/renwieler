@@ -492,7 +492,7 @@ def uploadRiders():
         role = getRole()
         compid = request.args.get('activecomp', None)
         comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop, racedays, reg_active FROM competitions WHERE id = :compid", compid=compid)
-        riders = db.execute("SELECT id, rider, nationality, rides_for, price FROM riders WHERE comp_id = :compid", compid=compid)
+        riders = db.execute("SELECT id, rider, nationality, rides_for, price, outsider FROM riders WHERE comp_id = :compid", compid=compid)
         return render_template("uploadRiders.html", comps=comps, role=role, riders=riders)
     """process the uploaded file"""
     if request.method == "POST":
@@ -514,7 +514,7 @@ def uploadRiders():
 #TODO @admin_required
 def newRider():
     """insert a new rider for the competition"""
-    db.execute("INSERT INTO riders (rider, comp_id, nationality, rides_for, price) VALUES (:rider, :compid, :nationality, :rides_for, :price)", rider=request.form.get("rider"), nationality=request.form.get("nationality"), rides_for=request.form.get("rides_for"), price=request.form.get("price"), compid=request.form.get("compid"))    # reload new user screen
+    db.execute("INSERT INTO riders (rider, comp_id, nationality, rides_for, price, outsider) VALUES (:rider, :compid, :nationality, :rides_for, :price, :outsider)", rider=request.form.get("rider"), nationality=request.form.get("nationality"), rides_for=request.form.get("rides_for"), price=request.form.get("price"), outsider=request.form.get("outsider"), compid=request.form.get("compid"))    # reload new user screen
     compid = request.form.get("compid")
     return redirect(url_for('uploadRiders', activecomp=compid))
 
@@ -523,7 +523,7 @@ def newRider():
 #TODO @admin_required
 def updateRider():
     """update the rider for the competition"""
-    db.execute("UPDATE riders SET rider = :rider, nationality = :nationality, rides_for = :rides_for, price = :price WHERE id = :id", rider=request.form.get("rider"), id=request.form.get("rider_id"), nationality=request.form.get("nationality"), rides_for=request.form.get("rides_for"), price=request.form.get("price"))
+    db.execute("UPDATE riders SET rider = :rider, nationality = :nationality, rides_for = :rides_for, price = :price, outsider = :outsider WHERE id = :id", rider=request.form.get("rider"), id=request.form.get("rider_id"), nationality=request.form.get("nationality"), rides_for=request.form.get("rides_for"), price=request.form.get("price"), outsider=request.form.get("outsider"))
     compid = request.form.get("compid")
     # reload new user screen
     return redirect(url_for('uploadRiders', activecomp=compid))
