@@ -451,9 +451,9 @@ def newComp():
         active = request.form.get("reg_active")
         if active != "on":
             active = "off"
-        db.execute("INSERT INTO competitions (racetype_id, year, startdate, reg_active, reg_stop, racedays, total_price) VALUES (:racetype, :year, :startdate, :reg_active, :reg_stop, :racedays, :total_price)",
+        db.execute("INSERT INTO competitions (racetype_id, year, startdate, reg_active, reg_stop, racedays, total_price, min_outsider) VALUES (:racetype, :year, :startdate, :reg_active, :reg_stop, :racedays, :total_price, :min_outsider)",
                    racetype=request.form.get("racetype"), year=request.form.get("year"), startdate=request.form.get("startdate"), reg_active=active,
-                   reg_stop=request.form.get("reg_stop"), racedays=request.form.get("racedays"), total_price=request.form.get("total_price"))
+                   reg_stop=request.form.get("reg_stop"), racedays=request.form.get("racedays"), total_price=request.form.get("total_price"), min_outsider=request.form.get("min_outsider"))
         # Redirect user to home page
         return render_template("admin.html", role=role)
 
@@ -466,7 +466,7 @@ def editComp():
         #Get the role of the user from de DB
         role = getRole()
         compid = request.args.get('activecomp', None)
-        comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop, racedays, reg_active, total_price FROM competitions WHERE id = :compid", compid=compid)
+        comps = db.execute("SELECT id, racetype_id, year, startdate, reg_stop, racedays, reg_active, total_price, min_outsider FROM competitions WHERE id = :compid", compid=compid)
         return render_template("editComp.html", comps=comps, role=role)
     """register a new competition in the database"""
     if request.method == "POST":
@@ -476,8 +476,8 @@ def editComp():
         active = request.form.get("reg_active")
         if active != "on":
             active = "off"
-        db.execute("UPDATE competitions SET startdate = :startdate, reg_active = :reg_active, reg_stop = :reg_stop, racedays = :racedays, total_price = :total_price WHERE id = :compid",
-                   startdate=request.form.get("startdate"), reg_active=active, total_price=request.form.get("total_price"),
+        db.execute("UPDATE competitions SET startdate = :startdate, reg_active = :reg_active, reg_stop = :reg_stop, racedays = :racedays, total_price = :total_price, min_outsider = :min_outsider WHERE id = :compid",
+                   startdate=request.form.get("startdate"), reg_active=active, total_price=request.form.get("total_price"), min_outsider=request.form.get("min_outsider"),
                    reg_stop=request.form.get("reg_stop"), racedays=request.form.get("racedays"), compid=compid)
         # Redirect user to admin page
         return render_template("admin.html", role=role)
