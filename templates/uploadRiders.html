@@ -67,7 +67,8 @@
                     <th>Rides for</th>
                     <th>Price</th>
                     <th>Outsider</th>
-                    <th>Save</th>
+                    <th>Update</th>
+                    <th>Delete</th>
                 </tr>
             </thead>
             <tbody>
@@ -82,6 +83,7 @@
                             <td class=""><input type="number" value="{{rider.price}}" name="price"></td>
                             <td class=""><input type="number" value="{{rider.outsider}}" name="outsider"></td>
                             <td><button type="submit" formaction="/updateRider">Update</button></td>
+                            <td><button type="submit" formaction="/deleteRider">Delete</button></td>
                         </tr>
                     </form>    
                 {% endfor %}

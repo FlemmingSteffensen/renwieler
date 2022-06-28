@@ -529,7 +529,17 @@ def updateRider():
     """update the rider for the competition"""
     db.execute("UPDATE riders SET rider = :rider, nationality = :nationality, rides_for = :rides_for, price = :price, outsider = :outsider WHERE id = :id", rider=request.form.get("rider"), id=request.form.get("rider_id"), nationality=request.form.get("nationality"), rides_for=request.form.get("rides_for"), price=request.form.get("price"), outsider=request.form.get("outsider"))
     compid = request.form.get("compid")
-    # reload new user screen
+    # reload updateRider screen
+    return redirect(url_for('uploadRiders', activecomp=compid))
+
+@app.route("/deleteRider", methods=["POST"])
+@login_required
+#TODO @admin_required
+def deleteRider():
+    """delete the rider from the competition"""
+    db.execute("DELETE FROM riders WHERE id = :id", id=request.form.get("rider_id"))
+    compid = request.form.get("compid")
+    # reload UpdateRider screen
     return redirect(url_for('uploadRiders', activecomp=compid))
 
 @app.route("/winners", methods=["GET"])
