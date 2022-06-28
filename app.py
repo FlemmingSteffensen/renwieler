@@ -403,7 +403,7 @@ def addTeamAdmin():
                     f = int(v)
                     if f > 0: 
                         db.execute("INSERT INTO team_member (team_id, rider_id, rank) VALUES (:team_id, :rider_id, :rank)", team_id=team_id, rider_id=k, rank=f)
-        return redirect("/addTeamAdmin")
+        return render_template("admin.html", role=role)
 
 @app.route("/admin")
 @login_required

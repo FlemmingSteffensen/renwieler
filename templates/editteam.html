@@ -74,7 +74,7 @@
                                     <p>The riders you have currently selected are visible in the same box as well as their ranking</p>
                                     <p>Keep in mind you must include a minimum of <b>{{min_outsider}}</b> riders <b>not</b> on the following list:</p>
                                     {% for rider2 in allRiders %}
-                                        {% if rider2.outsider == 1 %}
+                                        {% if rider2.outsider == 0 %}
                                         <p><b>{{rider2.rider}}</b></p>  
                                         {% endif %}
                                     {% endfor %}                                  
